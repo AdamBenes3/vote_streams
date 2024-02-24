@@ -115,87 +115,87 @@
 	\pagenumbering{arabic}
 	\pagebreak
 	
-	\chapter{Introduction}
+	\chapter{Úvod}
 	
-	\section{Rough specification of the project}
+	\section{Hrubé zadání projektu}
 	
-	Create an election processing program with different election rules, elections will be processed using streaming algorithms.
+	Vytvořit program na zpracování voleb s různými volebními pravidly, volby budou zpracovávány pomocí streaming algoritmů.
 	
-	\section{Where is the project stored}
+	\section{Kde projekt žije}
 	
-	Project is stored at \href{https://gitlab.com/adam_b3n3s/vote_streams}{Gitlab} and at this \href{https://github.com/AdamBenes3/vote_streams}{Github}.
+	Projekt žije na tomto \href{https://gitlab.com/adam_b3n3s/vote_streams}{Gitlabu} a na tomto \href{https://github.com/AdamBenes3/vote_streams}{Githubu}.
 	
-	\chapter{More detailed specifications}
+	\chapter{Podrobnější specifikace}
 	
-	\section{Libraries}
+	\section{Knihovny}
 	
 	\begin{itemize}
 		\item \href{https://github.com/PrefLib}{Preflib}.
 		\item ...
 	\end{itemize}
 	
-	\section{Resources}
+	\section{Zdroje}
 	
 	\begin{itemize}
 		\item 
 	\end{itemize}
 	
-	\section{Algorithms}
+	\section{Algoritmy}
 	
 	\begin{itemize}
 		\item 
 	\end{itemize}
 	
-	\section{Decomposition of the project}
+	\section{Dekompozice projektu}
 	
-	\subsection{File tree}
+	\subsection{Souborvý strom}
 	
 	\begin{itemize}
 		\item src:
 		
-		Contains all source code.
+		Obsahuje veškeré zrojové kódy.
 		
 		\item docs:
 		
-		Contains .tex files related to the project, specifications, user documentation, developer documentation. All at least in thesse languages:
+		Obsahuje .tex soubory spjaté s projektem, specifikace, uživatelská dokumentace, vývojářská dokumentace. Vše alespoň v jazycích:
 		
 		\begin{itemize}
-			\item Czech.
-			\item English.
+			\item Čeština.
+			\item Angličtina.
 		\end{itemize}
 		
 		\item votes:
 		
-		Contains ballot files.
+		Obsahuje soubory s volebními lístky.
 		
 		\item test:
 		
-		Contains function tests in src.
+		Obsahuje testy funkcí v src.
 	\end{itemize}
 	
-	\subsection{Dekomposition of src}
+	\subsection{Dekompozice src}
 	
 	\subsubsection{main.py}
 	
-	This is the main method it will read data from a file, call functions from other Python files that will contain individual voting stream algorithms, and more.
+	Jedná se o hlavní metodu která bude číst data ze souboru, volat funkce z jiných Python souborů, které budou obsahovat jednotlivé voting stream algoritmy a další.
 	
 	\subsubsection{vote\_generator.py}
 	
-	This is a file that will generate choices, in various ways:
+	Jedná se o třídu, která bude mít za úkol generovat volby, různými způsoby:
 	
 	\begin{itemize}
-		\item Exponential distribution.
-		\item Normal distribution (Gaussian curve).
+		\item Exponenciální rozdělení.
+		\item Normální rozdělení (Gaussova křivka).
 		\item ...
 	\end{itemize}
 	
-	\subsection{Files of individual election rules}
+	\subsection{Soubory jednotlivých volebních pravidel}
 	
-	In the file vote\_rules. It contains the implementation of individual election rules.
+	V souboru vote\_rules. Obsahuje implementaci jednotlyvých volebních pravidel.
 	
-	\subsection{Sampling algorithms}
+	\subsection{Sampling algoritmy}
 	
-	Selection of smaller number of tickets.
+	Výběr nějakého řádově menšího počtu lístků.
 	
 	
 	
