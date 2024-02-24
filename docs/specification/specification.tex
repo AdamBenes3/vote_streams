@@ -1,0 +1,118 @@
+\documentclass[a4paper,12pt]{report}
+\addtolength{\topmargin}{-0.8in}
+\setlength\textheight{248mm}
+\setlength\textwidth{165mm}
+\setlength\oddsidemargin{-2mm}
+\setlength\evensidemargin{-2mm}
+\usepackage[czech]{babel}
+\usepackage[a-2u]{pdfx}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{lmodern,textcomp}
+\usepackage[T1]{fontenc}
+\usepackage{fancyhdr}
+\usepackage{xcolor,colortbl}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{pgfplots}
+\usepackage{multicol}
+\usepackage{ulem}
+\usepackage{color}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{setspace}
+\usepackage{listings}
+\usepackage{cancel}
+\usepackage{marvosym}
+\usepackage{multicol}
+
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\graphicspath{ {../images/} }
+\def\columnseprulecolor{\color{black}}
+\setlength{\columnseprule}{0.3pt}
+\def\title{Specification}
+\def\author{Adam Beneš}
+\setlength{\parindent}{0pt}
+\def\doubleunderline#1{\underline{\underline{#1}}}\makeatletter
+\def\@makechapterhead#1{
+	{\parindent \z@ \raggedright \normalfont
+		\huge\bfseries \thechapter. #1
+		\par\nobreak
+		\vskip 20\p@
+}}
+\def\@makeschapterhead#1{
+	{\parindent \z@ \raggedright \normalfont
+		\huge\bfseries #1
+		\par\nobreak
+		\vskip 20\p@
+}}
+\makeatother
+
+\renewcommand{\chaptermark}[1]{%
+	\markboth{#1}{}}
+
+\fancypagestyle{toc}{
+	\fancyhf{}
+	\renewcommand{\headrulewidth}{0.4pt}
+	\renewcommand{\footrulewidth}{0.4pt}
+	\fancyhead[C]{}
+	\fancyhead[L]{\textbf{\title}}
+	\fancyfoot[L]{\author}
+	\fancyfoot[C]{}
+	\fancyfoot[R]{\thepage}
+}
+
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\renewcommand{\headrulewidth}{0.4pt}
+	\renewcommand{\footrulewidth}{0.4pt}
+	\fancyhead[C]{}
+	\fancyhead[L]{\textbf{\title\ -- \thechapter. \leftmark}}
+	\fancyfoot[L]{\author}
+	\fancyfoot[C]{}
+	\fancyfoot[R]{\thepage}
+}
+
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=false,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\begin{document}
+	\pagenumbering{roman}
+	\addtocontents{toc}{\protect\thispagestyle{toc}}
+	\pagestyle{toc}
+	\tableofcontents
+	\cleardoublepage
+	\pagestyle{plain}
+	\pagenumbering{arabic}
+	\pagebreak
+	
+\end{document}
