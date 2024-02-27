@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 # Import functions to test
 from src.misra_gries import misra_gries
 
-class sampling_test(unittest.TestCase):
+class misra_gries_test(unittest.TestCase):
     def test_misra_gries(self):
         # Test case 1
         input_array_1 = [1, 4, 5, 4, 4, 5, 4, 4]
