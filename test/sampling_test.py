@@ -10,8 +10,15 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from src.sampling import basic_sampling_algorithm, random_sample_update, sampling_algorithm_L
 
 class sampling_test(unittest.TestCase):
+    """
+    THE TESTS ARE NOT DETEMINISTIC
+    The tests tests work by running the sampling algorithms multiple times and checking if the output is roughly uniform.
+    num_trials says how many times to run the randomize algorithm.
+    The expected_count is the number of times each element should appear in the output array.
+    The error_margin says maximal error that is consider uniform.
+    """
     def test_basic_sampling_algorithm(self):
-        # Example input array from 0 to 99
+        # Example input array from 0 to 499
         input_array = list(range(500))
         # Example value for k
         k = 10
@@ -27,12 +34,12 @@ class sampling_test(unittest.TestCase):
         # Check if all elements in input_array have roughly the same count
         expected_count = num_trials / len(input_array)
         # 9% error margin
-        i = 0.09
+        error_margin = 0.09
         for count in counts.values():
-            self.assertAlmostEqual(count, expected_count, delta=num_trials * i)
+            self.assertAlmostEqual(count, expected_count, delta=num_trials*error_margin)
     
     def test_sampling_algorithm_L(self):
-        # Example input array from 0 to 99
+        # Example input array from 0 to 499
         input_array = list(range(500))
         # Example value for k
         k = 10
@@ -48,9 +55,9 @@ class sampling_test(unittest.TestCase):
         # Check if all elements in input_array have roughly the same count
         expected_count = num_trials / len(input_array)
         # 9% error margin
-        i = 0.09
+        error_margin = 0.09
         for count in counts.values():
-            self.assertAlmostEqual(count, expected_count, delta=num_trials * i)
+            self.assertAlmostEqual(count, expected_count, delta=num_trials*error_margin)
 
 
 if __name__ == '__main__':
