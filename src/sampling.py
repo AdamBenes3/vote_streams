@@ -39,3 +39,42 @@ def random_sample_update(x, n, s, k):
         s[i] = x
     # Return the new values of n and s
     return n, s
+
+def sampling_algorithm_L(input_array, k):
+    """
+    O(k(1 + log(n/k)))
+    Input: An array of n elements and an integer k
+    Output: An array of k elements
+    """
+    output_array = input_array[:k]  # Initialize reservoir with the first k elements of S
+    
+    # Initialize W
+    w = exp(log(random()) / k)
+    
+    i = k  # Start from the k+1-th element
+    for _ in input_array[k:]:
+        # Calculate the index to skip to
+        skip_to_index = i + floor(log(random()) / log(1 - w)) + 1
+        # immitate the behavior of: if skip_to_index < n:
+        try:
+            # Replace a random item in the reservoir with the item at index skip_to_index
+            random_index = randint(0, k - 1)
+            output_array[random_index] = input_array[skip_to_index]
+            
+            # Update W
+            w *= exp(log(random()) / k)
+        except IndexError:
+            return output_array
+        i += 1
+    return output_array
+
+# Example usage
+# input_array = list(range(500))
+# k = 10
+# num_trials = 10
+# for _ in range(num_trials):
+#     output_array = basic_sampling_algorithm(input_array, k)
+#     print(output_array)
+#     output_array = sampling_algorithm_L(input_array, k)
+#     print(output_array)
+#     print()
