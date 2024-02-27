@@ -60,5 +60,6 @@ class sampling_test(unittest.TestCase):
             self.assertAlmostEqual(count, expected_count, delta=num_trials*error_margin)
 
 
+
 if __name__ == '__main__':
     unittest.main()
