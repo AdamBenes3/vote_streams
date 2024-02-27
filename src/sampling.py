@@ -39,4 +39,3 @@ def random_sample_update(x, n, s, k):
         s[i] = x
     # Return the new values of n and s
     return n, s
-

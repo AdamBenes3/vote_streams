@@ -29,4 +29,3 @@ def misra_gries(k, input_array):
             for key in keys_to_delete:
                 del output_dict[key]
     return list(output_dict) # return output_dict
-
