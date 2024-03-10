@@ -7,7 +7,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # Import functions to test
-from src.sampling import basic_sampling_algorithm, random_sample_update, sampling_algorithm_L
+from src.sampling import basic_sampling_algorithm, sampling_algorithm_L
 
 class sampling_test(unittest.TestCase):
     """

@@ -1,31 +1,84 @@
 from math import floor
+import heapq
 
+class MisraGries:
+    
+    def __init__(self, k):
+        self.D1 = {}
+        self.D2 = {}
+        self.H = []
+        self.k = k
+        self.s = 0
+
+    def misra_gries_update(self, element):
+        """
+        O(k)
+        Input: An element
+        Output: None
+        """
+        
+        # If the element is already in the dictionary, increase the counter
+        if (element in self.D1):
+            self.D1[element] += 1
+            return
+        
+        # If the element is not in the dictionary, add it if there is space
+        if (len(self.D1) < self.k-1):
+            self.D1[element] = 1
+            return
+        
+        keys_to_delete = []
+        for key in self.D1:
+            # Decrease the counter of each key
+            self.D1[key] -= 1
+            if (self.D1[key] == 0):
+                # Add the key to the list of keys to delete because the counter is 0
+                keys_to_delete.append(key)
+        # Delete the keys with counter 0
+        for key in keys_to_delete:
+            del self.D1[key]
+
+    def misra_gries_update_with_heap(self, element):
+        """
+        O(k)
+        Input: An element
+        Output: None
+        """
+        
+        # If the element is already in the dictionary, increase the counter
+        if (element in self.D2):
+            self.D2[element] += [1, 1]
+            return
+        
+        # If the element is not in the dictionary, add it if there is space
+        if (len(self.D2) < self.k-1):
+            self.D2[element] = [1, 1]
+            return
+        
+        keys_to_delete = []
+        for key in self.D2:
+            # Decrease the counter of each key
+            self.D2[key][0] -= 1
+            if (self.D2[key][0] == 0):
+                # Add the key to the list of keys to delete because the counter is 0
+                keys_to_delete.append(key)
+        # Delete the keys with counter 0
+        for key in keys_to_delete:
+            del self.D2[key]
+        
 
 def misra_gries(k, input_array):
     """
-    O(k(log(m)+log(n))) where m is the number of distinct elements in the input array and n is the number of elements in the input array
-    Input: An integer k and an array of n elements
-    k is number that says that n/k is the minimum frequency of the elements that we want to count
-    Output: A list (if list wanted change the return type to dictionary) with the elements that appear at least floor(n/k) times
+    O(n)
+    Input: An array of n elements and an integer k
+    Output: An array of k elements
     """
-    # print("n/k = " + str(floor(len(input_array)/k))) <-- uncomment this line to see the value of n/k, very useful for debugging
-    output_dict = {}
+    # Initialize the Misra-Gries object
+    mg = MisraGries(k)
+    # Update the Misra-Gries object with the input array
     for element in input_array:
-        # If the element is already in the dictionary, increase the counter
-        if (element in output_dict):
-            output_dict[element] += 1
-        # If the element is not in the dictionary, add it if there is space
-        elif (len(output_dict) < k-1):
-            output_dict[element] = 1
-        else:
-            keys_to_delete = []
-            for key in output_dict:
-                # Decrease the counter of each key
-                output_dict[key] -= 1
-                if (output_dict[key] == 0):
-                    # Add the key to the list of keys to delete because the counter is 0
-                    keys_to_delete.append(key)
-            # Delete the keys with counter 0
-            for key in keys_to_delete:
-                del output_dict[key]
-    return list(output_dict) # return output_dict
+        mg.misra_gries_update_with_heap(element)
+    # Return the dictionary of the Misra-Gries object
+    return list(mg.D2)
+
+print(misra_gries(2, [1, 4, 5, 4, 4, 5, 4, 4])) # [4]

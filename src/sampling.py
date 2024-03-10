@@ -1,41 +1,44 @@
 from random import randint, random
 from math import exp, floor, log
 
+class sampling:
+    def __init__(self, k):
+        self.k = k
+        self.n = 0
+        self.S = [None] * k
+    
+    def update_R(self, x):
+        """
+        O(1)
+        Input: An integer x, a non-negative integer n, an array s of n elements, and an integer k
+        Where:
+        - x is the new element
+        - n is the number of elements seen so far
+        - s is the array of sample elements
+        - k is the number of elements to sample
+        Output: An integer n' and an array s' of n' elements
+        """
+        self.n += 1
+        if (self.n-1 < self.k):
+            self.S[self.n-1] = x
+        else:
+            i = randint(0, self.n-1)
+            if (i < self.k):
+                # If i < k, replace the i-th element of s with x
+                self.S[i] = x
+
 def basic_sampling_algorithm(input_array, k):
     """
     O(n)
     Input: An array of n elements and an integer k
     Output: An array of k elements
     """
-    # Initialize reservoir with the first k elements of S
-    output_array = input_array[:k]
-    i = k
+    smp = sampling(k)
     for element in input_array:
-        # If i >= k, try replacing a random element in the output array with the current element
-        j = randint(0, i)
-        if (j < k):
-            output_array[j] = element
-        i += 1
-    return output_array
+        smp.update_R(element)
+    return smp.S
 
-def random_sample_update(x, n, s, k):
-    """
-    O(1)
-    Input: An integer x, a non-negative integer n, an array s of n elements, and an integer k
-    Where:
-    - x is the new element
-    - n is the number of elements seen so far
-    - s is the array of sample elements
-    - k is the number of elements to sample
-    Output: An integer n' and an array s' of n' elements
-    """
-    n += 1
-    i = randint(0, n-1)
-    # If i < k, replace the i-th element of s with x
-    if (i < k):
-        s[i] = x
-    # Return the new values of n and s
-    return n, s
+
 
 def sampling_algorithm_L(input_array, k):
     """
@@ -49,7 +52,7 @@ def sampling_algorithm_L(input_array, k):
     w = exp(log(random()) / k)
     # Start from the k+1-th element
     i = k
-    for _ in input_array[k:]:
+    while True:
         # Calculate the index to skip to
         i = i + floor(log(random()) / log(1 - w)) + 1
         # immitate the behavior of: if skip_to_index < n:
@@ -62,15 +65,12 @@ def sampling_algorithm_L(input_array, k):
             w *= exp(log(random()) / k)
         except IndexError:
             return output_array
-    return output_array
 
 # Example usage
-# input_array = list(range(500))
+# input_array = list(range(11))
 # k = 10
-# num_trials = 10
+# num_trials = 1000
 # for _ in range(num_trials):
 #     output_array = basic_sampling_algorithm(input_array, k)
-#     print(output_array)
-#     output_array = sampling_algorithm_L(input_array, k)
 #     print(output_array)
 #     print()
