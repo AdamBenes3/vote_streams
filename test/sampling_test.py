@@ -7,7 +7,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # Import functions to test
-from src.sampling import basic_sampling_algorithm, sampling_algorithm_L
+from src.sampling import algorithm_R
 
 class sampling_test(unittest.TestCase):
     """
@@ -28,7 +28,7 @@ class sampling_test(unittest.TestCase):
         # Count occurrences of each element in the output across multiple trials
         counts = Counter()
         for _ in range(num_trials):
-            output_array = basic_sampling_algorithm(input_array, k)
+            output_array = algorithm_R(input_array, k)
             counts.update(output_array)
         
         # Check if all elements in input_array have roughly the same count
@@ -49,7 +49,7 @@ class sampling_test(unittest.TestCase):
         # Count occurrences of each element in the output across multiple trials
         counts = Counter()
         for _ in range(num_trials):
-            output_array = sampling_algorithm_L(input_array, k)
+            output_array = algorithm_R(input_array, k)
             counts.update(output_array)
         
         # Check if all elements in input_array have roughly the same count
