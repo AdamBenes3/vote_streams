@@ -38,5 +38,5 @@ def algorithm_R(input_array, k):
         smp.update_R(element)
     return smp.S
 
-# The L algorithm is not good for our purpouses
+# Algorithm L is not good for our purpouses
 # since we cant easily skip lines in our file

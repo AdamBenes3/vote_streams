@@ -30,7 +30,6 @@ class stv:
                     D[i[0]] = 1
         # print(D)
         to_pop = self.find_least_winner(D)
-        print(to_pop)
         for i in to_pop:
             for j in self.lst:
                 counter = 0
