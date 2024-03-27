@@ -35,13 +35,4 @@ class Edge:
         self.vertices = vertices
         self.value = value
 
-x = Vertex("X")
 
-y = Vertex("Y")
-
-x.neighbours = [y, x]
-y.neighbours = [x, x]
-
-g = Graph([x, y], [])
-
-print(g)
