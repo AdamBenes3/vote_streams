@@ -3,16 +3,20 @@ class Graph:
         self.V = []
         if len(V) > 0:
             self.add_vertex(*V)
+    
+    def update_value(self, vertex, neighbour):
+        for v in self.V:
+            if v.name == vertex:
+                for n in v.neighbours:
+                    if v.name == vertex:
+                        pass
 
     def __str__(self):
         result = ""
         for vertex in self.V:
             result += vertex.name + ": "
             for neighbour in vertex.neighbours:
-                if isinstance(neighbour, dict):
-                    result += list(neighbour.keys())[0].name + ":" + str(list(neighbour.values())[0]) + ", "
-                else:
-                    result += neighbour.name + ", "
+                result += list(neighbour.keys())[0].name + ":" + str(list(neighbour.values())[0]) + ", "
             if result.endswith(", "):
                 result = result[:-2]
             result += "\n"
@@ -49,7 +53,7 @@ class Vertex:
         for app in append:
             if isinstance(app, dict):
                 for neighbour, weight in app.items():
-                    self.neighbours.append((neighbour, weight))
+                    self.neighbours.append(app)
             elif isinstance(app, list):
                 self.neighbours.extend(app)
             else:
@@ -57,23 +61,21 @@ class Vertex:
                 
     @property
     def neighbours_names(self):
-        return [list(neighbor.keys())[0].name + ":" + str(list(neighbor.values())[0]) if isinstance(neighbor, (tuple, dict)) else neighbor.name for neighbor in self.neighbours]
+        return [list(neighbor.keys())[0].name + ":" + str(list(neighbor.values())[0]) for neighbor in self.neighbours]
 
 
 
 A = Vertex("a")
 
-B = Vertex("b", [A])
+B = Vertex("b", [{A : 1}])
 
 C = Vertex("c")
 
-print(C)
-
 A.add_neighbour([{B : 3}, {C : 4}])
 
-B.add_neighbour([C])
+B.add_neighbour({C : 5})
 
-C.add_neighbour(A, [B])
+C.add_neighbour({A : 7}, [{B : 2}])
 
 G = Graph([A, B], C)
 
