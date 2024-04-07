@@ -17,7 +17,6 @@ class Graph:
     
     def update_value(self, vertex, neighbour, value) -> None:
         v, n, key = self.find_by_name(vertex, neighbour)
-        print(v, n, key)
         n[key] = value
         return
     
@@ -93,18 +92,12 @@ C.add_neighbour({A : 7}, [{B : 2}])
 
 G = Graph([A, B], C)
 
-print(G)
-
-print(G.verticies_names)
-
-print(G.V[0].neighbours_names)
-
-print("------")
+# print("------")
 
 x = G.get_value_between("a", "b") + 3
 
-print(x)
+# print(x)
 
 G.update_value("a", "b", x)
 
-print(A.neighbours)
+# print(A.neighbours)
