@@ -4,13 +4,18 @@ class Graph:
         if len(V) > 0:
             self.add_vertex(*V)
     
-    def update_value(self, vertex, neighbour):
+    def update_value(self, vertex, neighbour, value) -> None:
+        # Find the vertex
         for v in self.V:
             if v.name == vertex:
+                # Find the neighbour
                 for n in v.neighbours:
-                    if v.name == vertex:
-                        pass
-
+                    # Look at its key
+                    for key, _ in n.items():
+                        if key.name == neighbour:
+                            # Update value of vertex : neighbour
+                            n[key] = value
+                            return
     def __str__(self):
         result = ""
         for vertex in self.V:
@@ -84,3 +89,9 @@ print(G)
 print(G.verticies_names)
 
 print(G.V[0].neighbours_names)
+
+print("------")
+
+G.update_value("a", "b", 6)
+
+print(A.neighbours)
