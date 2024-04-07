@@ -4,7 +4,7 @@ class Graph:
         if len(V) > 0:
             self.add_vertex(*V)
     
-    def update_value(self, vertex, neighbour, value) -> None:
+    def find_by_name(self, vertex, neighbour):
         # Find the vertex
         for v in self.V:
             if v.name == vertex:
@@ -13,9 +13,18 @@ class Graph:
                     # Look at its key
                     for key, _ in n.items():
                         if key.name == neighbour:
-                            # Update value of vertex : neighbour
-                            n[key] = value
-                            return
+                            return v, n, key
+    
+    def update_value(self, vertex, neighbour, value) -> None:
+        v, n, key = self.find_by_name(vertex, neighbour)
+        print(v, n, key)
+        n[key] = value
+        return
+    
+    def get_value_between(self, vertex, neighbour) -> int:
+        v, n, key = self.find_by_name(vertex, neighbour)
+        return n[key]
+    
     def __str__(self):
         result = ""
         for vertex in self.V:
@@ -92,6 +101,10 @@ print(G.V[0].neighbours_names)
 
 print("------")
 
-G.update_value("a", "b", 6)
+x = G.get_value_between("a", "b") + 3
+
+print(x)
+
+G.update_value("a", "b", x)
 
 print(A.neighbours)
