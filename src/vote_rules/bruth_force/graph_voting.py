@@ -1,4 +1,5 @@
 from graph import Graph, Vertex
+from typing import List
 
 votes = [["a", "b", "c", "d"], ["d", "b", "c", "a"], ["d", "c", "a", "b"], ["d", "c", "a", "b"], ["d", "c", "a", "b"]]
 
