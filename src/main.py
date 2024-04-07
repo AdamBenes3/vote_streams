@@ -3,11 +3,11 @@
 import os
 import sys
 
-def main():
+def main() -> int:
     
     # Check if the number of arguments is correct
     if len(sys.argv) != 3:
-        return
+        return 1
     
     votes_folder = sys.argv[1]
     vote_files = os.listdir(votes_folder)
@@ -27,7 +27,8 @@ def main():
                 if (line.startswith("#")):
                     continue
                 print(line)
+    return 0
     
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -1,22 +1,19 @@
 from random import randint, random
 from math import exp, floor, log
+from typing import List
 
 class sampling:
-    def __init__(self, k):
+    def __init__(self, k : int) -> None:
         self.k = k
         self.n = 0
         self.S = [None] * k
+        return
     
-    def update_R(self, x):
+    def update_R(self, x) -> None:
         """
         O(1)
-        Input: An integer x, a non-negative integer n, an array s of n elements, and an integer k
-        Where:
-        - x is the new element
-        - n is the number of elements seen so far
-        - s is the array of sample elements
-        - k is the number of elements to sample
-        Output: An integer n' and an array s' of n' elements
+        Input new element x
+        Output None
         """
         self.n += 1
         if (self.n-1 < self.k):
@@ -26,8 +23,9 @@ class sampling:
             if (i < self.k):
                 # If i < k, replace the i-th element of s with x
                 self.S[i] = x
+        return
 
-def algorithm_R(input_array, k):
+def algorithm_R(input_array, k : int) -> List:
     """
     O(n)
     Input: An array of n elements and an integer k

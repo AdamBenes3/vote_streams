@@ -1,10 +1,12 @@
 from vector import Vector
 
 class Plurality:
-    def __init__(self):
+    def __init__(self) -> None:
         self.result = Vector([1, 3, 4])
-    def ticket_update(self, new_ticket):
+        return
+    def ticket_update(self, new_ticket : Vector) -> None:
         self.result += new_ticket
+        return
 
 PL = Plurality()
 

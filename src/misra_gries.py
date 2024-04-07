@@ -1,18 +1,20 @@
 from math import floor
 import heapq
+from typing import List
 
 class MisraGries:
     
-    def __init__(self, k, with_heap = True):
+    def __init__(self, k : int, with_heap : bool = True) -> None:
         self.D = {}
         self.k = k
         self.__with_heap__ = with_heap
         if (with_heap):
             self.H = []
             self.s = 0
+        return
             
 
-    def misra_gries_update(self, element):
+    def misra_gries_update(self, element) -> None:
         """
         Update counts using either a heap or without a heap based on the initialization parameter.
         """
@@ -20,8 +22,9 @@ class MisraGries:
             self.__misra_gries_update_with_heap__(element)
         else:
             self.__misra_gries_update_without_heap__(element)
+        return
 
-    def __misra_gries_update_without_heap__(self, element):
+    def __misra_gries_update_without_heap__(self, element) -> None:
         """
         O(k)
         Input: An element
@@ -48,8 +51,9 @@ class MisraGries:
         # Delete the keys with counter 0
         for key in keys_to_delete:
             del self.D[key]
+        return
 
-    def __misra_gries_update_with_heap__(self, element):
+    def __misra_gries_update_with_heap__(self, element) -> None:
         """
         O(log(k))
         Input: An element
@@ -74,9 +78,10 @@ class MisraGries:
                                             #  but it means that we drop the first item
                                             #  and are jusinterested in the second one 
             self.D.pop(elem)
+        return
 
 
-def misra_gries(k, input_array):
+def misra_gries(k : int, input_array) -> List:
     """
     Used mainly for testing
     Input: An array of n elements and an integer k
@@ -90,7 +95,7 @@ def misra_gries(k, input_array):
     # Return the dictionary of the Misra-Gries object
     return list(mg.D)
 
-def misra_gries_with_heap(k, input_array):
+def misra_gries_with_heap(k : int, input_array) -> List:
     """
     Used mainly for testing
     Input: An array of n elements and an integer k

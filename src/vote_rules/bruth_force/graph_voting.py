@@ -1,31 +1,25 @@
 from graph import Graph, Vertex
 
-# print("-----------------------")
-
 votes = [["a", "b", "c", "d"], ["d", "b", "c", "a"], ["d", "c", "a", "b"], ["d", "c", "a", "b"], ["d", "c", "a", "b"]]
 
 
 
-def inicilize_complete_graph(vertecies) -> Graph:
+def inicilize_complete_graph(vertecies : List[str]) -> Graph:
     V = []
-
     for i in first_vote:
         V.append(Vertex(i))
-
     for v in V:
         for i in V:
             if v != i:
                 v.add_neighbour({i : 0})
-                
     G = Graph(V)
-    
     return G
 
 first_vote = votes[0]
 
 G = inicilize_complete_graph(first_vote)
 
-def voting(votes, G) -> Graph:
+def voting(votes : List[str], G : Graph) -> Graph:
     for vote in votes:
         for idx_i, i in enumerate(vote):
             for idx_j, j in enumerate(vote):
@@ -38,7 +32,7 @@ def voting(votes, G) -> Graph:
 
 G = voting(votes, G)
 
-def find_winner(G) -> Vertex:
+def find_winner(G : Graph) -> Vertex:
     best_vertex = G.V[0]
     best_counter = -1
     for v in G.V:
@@ -55,8 +49,4 @@ def find_winner(G) -> Vertex:
 v = find_winner(G)
 
 print(v)
-
-
-
-
 
