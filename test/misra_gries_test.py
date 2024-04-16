@@ -1,10 +1,12 @@
-import unittest
-from collections import Counter
-
-# Add parent directory to path
+# Add main directory to path
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if main_directory not in sys.path:
+    sys.path.append(main_directory)
+
+import unittest
+from collections import Counter
 
 # Import functions to test
 from src.misra_gries import misra_gries, misra_gries_with_heap
