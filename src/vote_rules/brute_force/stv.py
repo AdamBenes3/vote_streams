@@ -9,7 +9,7 @@ class stv:
         self.nr_of_candidates = nr_of_candidates
         return
 
-    def find_worst_candidate(self) -> candidate:
+    def find_worst_candidate(self) -> any:
         """
         Finds the worst candidate of all that is the candidate that is least time first, if there are more of tham than the one that is least time secodn etc.
         Output candidate

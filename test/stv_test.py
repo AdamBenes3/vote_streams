@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 # Import functions to test
 from src.vote_rules.brute_force.stv import stv
 
-class misra_gries_test(unittest.TestCase):
+class stv_test(unittest.TestCase):
     def test_stv1(self):
         candidates = [1, 2, 3, 4, 5]
         votes = [[4, 2, 3, 1, 5], [3, 1, 2, 4, 5], [4, 1, 3, 5, 2], [5, 1, 3, 2, 4]]
