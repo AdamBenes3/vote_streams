@@ -23,11 +23,14 @@ class stv:
 
         # Go thru all the candidates to find the worst
         for candidate in self.candidates:
+            # For every candidate make array of its occurrences
             candidate_list = [0] * self.nr_of_candidates
+            # Find where the candidate is in this vote
             for vote in self.votes:
                 index = vote.index(candidate)
                 candidate_list[index] += 1
             for i in range(self.nr_of_candidates):
+                # Compare current candidate to worst candidate
                 if candidate_list[i] < worst_candidate_list[i]:
                     worst_candidate_list = candidate_list
                     worst_candidate = candidate
@@ -37,16 +40,20 @@ class stv:
         return worst_candidate
 
     def remove_worst(self) -> None:
+        # Find the worst candidate
         worst = self.find_worst_candidate()
+        # From every vote remove the worst candidate
         for vote in self.votes:
             index = vote.index(worst)
             vote.pop(index)
+        # Remove worst from candidates also
         index = self.candidates.index(worst)
         self.candidates.pop(index)
         self.nr_of_candidates -= 1
         return
 
     def stv(self) -> int:
+        # Simply find the winner
         while self.nr_of_candidates > 1:
             self.remove_worst()
         return self.candidates[0]
