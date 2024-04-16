@@ -1,3 +1,10 @@
+# Add main directory to path
+import sys
+import os
+main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+if main_directory not in sys.path:
+    sys.path.append(main_directory)
+
 import numpy as np
 import matplotlib
 from matplotlib import pyplot as plt
@@ -27,10 +34,4 @@ def plot_histogram(*data : int) -> None:
     plt.ylabel('Number of elements')
     plt.show()
     return
-
-random_numbers1 = generate_random_number_exponential_distribution(0.3, size=10)
-
-random_numbers2 = generate_random_number_normal_distribution(0, size=10)
-
-plot_histogram(random_numbers1, random_numbers2)
 

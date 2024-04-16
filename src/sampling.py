@@ -1,3 +1,10 @@
+# Add main directory to path
+import sys
+import os
+main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+if main_directory not in sys.path:
+    sys.path.append(main_directory)
+
 from random import randint, random
 from math import exp, floor, log
 from typing import List

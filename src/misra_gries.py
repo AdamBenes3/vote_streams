@@ -1,3 +1,10 @@
+# Add main directory to path
+import sys
+import os
+main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+if main_directory not in sys.path:
+    sys.path.append(main_directory)
+
 from math import floor
 import heapq
 from typing import List
@@ -76,7 +83,7 @@ class MisraGries:
         while self.H and self.D[self.H[0][1]][0] <= self.s:
             _, elem = heapq.heappop(self.H) # "_, elem" is little wierd
                                             #  but it means that we drop the first item
-                                            #  and are jusinterested in the second one 
+                                            #  and are just interested in the second one 
             self.D.pop(elem)
         return
 
@@ -109,4 +116,3 @@ def misra_gries_with_heap(k : int, input_array) -> List:
     # Return the dictionary of the Misra-Gries object
     return list(mg.D)
 
-# print(misra_gries(2, [1, 4, 5, 4, 4, 5, 4, 4])) # [4]
