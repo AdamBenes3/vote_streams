@@ -9,17 +9,22 @@ class stv:
         self.nr_of_candidates = nr_of_candidates
         return
 
-    def find_worst_candidate(self) -> int:
-        # First element to worst candidate
+    def find_worst_candidate(self) -> candidate:
+        """
+        Finds the worst candidate of all that is the candidate that is least time first, if there are more of tham than the one that is least time secodn etc.
+        Output candidate
+        """
+        # Set first element to worst candidate
         worst_candidate = self.candidates[0]
         worst_candidate_list = [0] * self.nr_of_candidates
-        for vote in votes:
+        for vote in self.votes:
             index = vote.index(worst_candidate)
             worst_candidate_list[index] += 1
 
-        for candidate in candidates:
+        # Go thru all the candidates to find the worst
+        for candidate in self.candidates:
             candidate_list = [0] * self.nr_of_candidates
-            for vote in votes:
+            for vote in self.votes:
                 index = vote.index(candidate)
                 candidate_list[index] += 1
             for i in range(self.nr_of_candidates):
@@ -45,19 +50,3 @@ class stv:
         while self.nr_of_candidates > 1:
             self.remove_worst()
         return self.candidates[0]
-
-
-candidates = [1, 2, 3, 4, 5]
-votes = [[4, 2, 3, 1, 5], [3, 1, 2, 4, 5], [4, 1, 3, 5, 2], [5, 1, 3, 2, 4]]
-
-print("Votes: ")
-
-for vote in votes:
-    print(vote)
-
-S = stv(candidates, votes, len(candidates))
-
-print("Winner: " + str(S.stv()))
-
-
-

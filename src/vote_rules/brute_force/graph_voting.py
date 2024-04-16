@@ -3,8 +3,6 @@ from typing import List
 
 votes = [["a", "b", "c", "d"], ["d", "b", "c", "a"], ["d", "c", "a", "b"], ["d", "c", "a", "b"], ["d", "c", "a", "b"]]
 
-
-
 def inicilize_complete_graph(vertecies : List[str]) -> Graph:
     V = []
     for i in first_vote:
