@@ -1,7 +1,7 @@
 # Add main directory to path
 import sys
 import os
-main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if main_directory not in sys.path:
     sys.path.append(main_directory)
 
@@ -25,13 +25,4 @@ def generate_random_number_normal_distribution(mean : int, size : int = 1) -> Un
     if size == 1:
         return random_numbers_int[0]
     return random_numbers_int.tolist()
-
-def plot_histogram(*data : int) -> None:
-    # Plot the histogram of the data
-    for data in data:
-        plt.hist(data, bins=40, alpha=0.5)
-    plt.xlabel('Value')
-    plt.ylabel('Number of elements')
-    plt.show()
-    return
 

@@ -19,7 +19,7 @@ class Plurality:
         """
         self.result += new_vote
         return
-    def votes_process(self, votes : List[Vector]) -> Vector:
+    def votes_process(self, votes : List[Vector]) -> str:
         """
         Adds list of votes
         """
