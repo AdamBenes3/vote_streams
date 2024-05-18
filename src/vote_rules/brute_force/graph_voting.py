@@ -41,14 +41,14 @@ class graph_voting():
                         x = G.get_value_between(j, i) - 1
                         G.update_value(j, i, x)
         return G
-    def find_winner(G : Graph) -> Vertex:
+    def copeland_winner(G : Graph) -> Vertex:
         """
         Find the candidate with most wins against others
         """
         # Inicilize with first candidate
         best_vertex = G.V[0]
         # Set best_counter to be bad (so someone for sure will be better)
-        best_counter = -1
+        best_counter = float('-inf')
         for v in G.V:
             positive_counter = 0
             # We look at neighbours
@@ -62,4 +62,25 @@ class graph_voting():
                 best_counter = positive_counter
                 best_vertex = v
         return str(best_vertex)
-
+    def minimax_condorcet_winner(G : Graph) -> Vertex:
+        """
+        Find the candidate with best worst matchup
+        """
+        # Inicilize with first candidate
+        best_vertex = G.V[0]
+        # Set best_counter to be bad (so someone for sure will be better)
+        best_counter = float('-inf')
+        for v in G.V:
+            # Worst matchup for this vertex
+            worst_matchup = float('inf')
+            # We look at neighbours
+            for n in v.neighbours:
+                for key, _ in n.items():
+                    # If candidate wins against this counter we increas its counter
+                    if n[key] < worst_matchup:
+                        worst_matchup = n[key]
+            # Check if this candidate is the best yet
+            if worst_matchup > best_counter:
+                best_counter = worst_matchup
+                best_vertex = v
+        return str(best_vertex)

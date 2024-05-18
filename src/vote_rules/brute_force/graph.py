@@ -60,7 +60,7 @@ class Graph:
         for v in self.V:
             if v.name == vertex:
                 x = v
-                break;
+                break
         if x == None:
             raise EOFError("Vertex not found")
         v = x
