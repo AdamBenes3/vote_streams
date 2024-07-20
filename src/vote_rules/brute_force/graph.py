@@ -51,6 +51,8 @@ class Graph:
             self.add_vertex(*V)
         return
     
+
+    # ZRYCHLIT!!!
     def find_by_name(self, vertex : str, neighbour : str) -> Tuple[Vertex, Dict, str]:
         """
         Find the vertex with given name (names are strings)
@@ -123,5 +125,6 @@ class Graph:
     def verticies_names(self) -> List[str]:
         # Transform the verticies to string by theyr name
         return [vertex.name for vertex in self.V]
+
 
 
