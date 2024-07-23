@@ -9,7 +9,7 @@ from src.vote_rules.brute_force.graph import Graph, Vertex
 from typing import List
 
 class graph_voting():
-    def inicilize_complete_graph(vertecies : List[str]) -> Graph:
+    def initialize_complete_graph(vertecies : List[str]) -> Graph:
         """
         Inicilize the complete graph (easy to do just by putting there the first vote :))
         """
@@ -24,22 +24,29 @@ class graph_voting():
                     v.add_neighbour({i : 0})
         G = Graph(V)
         return G
+    def process_vote(G : Graph, vote : str) -> Graph:
+        """
+        Compute weight on neighbours
+        """
+        # For every tuple in vote
+        for idx_i, i in enumerate(vote):
+            for idx_j, j in enumerate(vote):
+                # We do not want to count them twice
+                if idx_i < idx_j:
+                    # Compute who was before who
+                    x = G.get_value_between(i, j) + 1
+                    G.update_value(i, j, x)
+                    x = G.get_value_between(j, i) - 1
+                    G.update_value(j, i, x)
+        return G
     def voting(votes : List[str], G : Graph) -> Graph:
         """
-        Apply all votes and compute weight on neighbours
+        Apply all votes
         """
         # For every vote
         for vote in votes:
             # For every tuple in vote
-            for idx_i, i in enumerate(vote):
-                for idx_j, j in enumerate(vote):
-                    # We do not want to count them twice
-                    if idx_i < idx_j:
-                        # Compute who was before who
-                        x = G.get_value_between(i, j) + 1
-                        G.update_value(i, j, x)
-                        x = G.get_value_between(j, i) - 1
-                        G.update_value(j, i, x)
+            graph_voting.process_vote(G, vote)
         return G
     def copeland_winner(G : Graph) -> Vertex:
         """
