@@ -81,7 +81,8 @@ class graph_voting_test(unittest.TestCase):
         result = graph_voting.minimax_condorcet_winner(G)
         expected_output_1 = "d"  # Expected output dictionary
         self.assertEqual(result, expected_output_1)
-        
+        return
+
     def test_minimax2(self):
         votes = [["B", "C", "D", "A"], ["A", "D", "C", "B"], ["B", "A", "D", "C"], ["A", "B", "C", "D"], ["A", "C", "D", "B"]]
         candidates = ["A", "B", "C", "D"]
@@ -131,7 +132,6 @@ class graph_voting_test(unittest.TestCase):
         result = graph_voting.minimax_condorcet_winner(G)
         expected_output_1 = "E"  # Expected output dictionary
         self.assertEqual(result, expected_output_1)
-        
         
 if __name__ == '__main__':
     unittest.main()
