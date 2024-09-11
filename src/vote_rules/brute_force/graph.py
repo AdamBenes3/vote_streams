@@ -24,7 +24,7 @@ class Vertex:
     
     def add_neighbour(self, *append : Union[Dict, List]) -> None:
         """
-        Adding neighbor 
+        Adding neighbor and adding it to neighbout dict
         """
         for app in append:
             # If we care also about weights connected to neighbours
