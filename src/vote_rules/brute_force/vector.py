@@ -59,9 +59,9 @@ class Vector:
         # Iterate through the lists and perform adjacent swaps
         for i in range(len(lst_1)):
             while lst_1[i] != lst_2[i]:
-                # Find the index of the correct element in lst1 to swap
+                # Find the index of the correct element in lst_1 to swap
                 swap_idx = lst1.index(lst_2[i], i)
-                # Swap the element at swap_idx with the one before it until it's in the correct position
+                # Swap the element at swap_idx with the one before it until it is in the correct position
                 for j in range(swap_idx, i, -1):
                     lst1[j], lst1[j-1] = lst_1[j-1], lst_1[j]
                     count += 1
