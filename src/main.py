@@ -8,6 +8,7 @@ if main_directory not in sys.path:
     sys.path.append(main_directory)
 
 from src.preflib_vote_parsers.soc import parse_and_pass
+from src.vote_rules.fast_rules.misra_gries_scoring_rules import MGSR
 
 def main() -> int:
     

@@ -9,7 +9,7 @@ from math import floor
 import heapq
 from typing import List
 
-class MisraGries:
+class Misra_Gries:
     
     def __init__(self, k : int, with_heap : bool = True) -> None:
         self.D = {}
@@ -95,7 +95,7 @@ def misra_gries(k : int, input_array) -> List:
     Output: An array of k elements
     """
     # Initialize the Misra-Gries
-    mg = MisraGries(k, False)
+    mg = Misra_Gries(k, False)
     # run as a stream
     for element in input_array:
         mg.misra_gries_update(element)
@@ -109,7 +109,7 @@ def misra_gries_with_heap(k : int, input_array) -> List:
     Output: An array of k elements
     """
     # Initialize the Misra-Gries
-    mg = MisraGries(k)
+    mg = Misra_Gries(k)
     # run as a stream
     for element in input_array:
         mg.misra_gries_update(element)
