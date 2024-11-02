@@ -10,8 +10,11 @@ if main_directory not in sys.path:
 from src.preflib_vote_parsers.soc import parse_and_pass
 from src.vote_rules.fast_rules.misra_gries_scoring_rules import MGSR
 
+from src.sampling import sampling
+
 import tkinter as tk
 from tkinter import filedialog, messagebox
+import tempfile
 
 def get_number_of_alternatives(file_path):
     """Extracts the number of alternatives from the given file."""
@@ -27,8 +30,22 @@ def get_number_of_alternatives(file_path):
         print(f"Error reading from {file_path}: {e}")
         return None
 
+def get_number_of_votes(file_path):
+    """Extracts the number of votes from the given file."""
+    try:
+        with open(file_path, 'r') as file:
+            for line in file:
+                # Check if the line starts with the relevant header
+                if line.startswith("# NUMBER VOTERS:"):
+                    # Extract the number after the colon
+                    num_votes = int(line.split(":")[1].strip())
+                    return num_votes
+    except Exception as e:
+        print(f"Error reading from {file_path}: {e}")
+        return None
 
-def ProccesGenerating(output_path, num_votes, num_candidates, vote_type):
+
+def procces_generating(output_path, num_votes, num_candidates, vote_type):
 
     vote_type = vote_type.lower().replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
 
@@ -39,49 +56,84 @@ def ProccesGenerating(output_path, num_votes, num_candidates, vote_type):
         print(f"Error creating or writing to {output_path}: {e}")
         return 1
 
-def ProcessRun(input_path, output_path, rule, sampling):
+def process_line(line, pap):
+    # Skip the metadata
+    if not (line.startswith("#")):
+        print("This line: " + line)
+        line = line.replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
+        line = line[2:]
+        pap.input_line(line)
+        result = pap.result()
+        return result
+
+def process_file(votes_file, rule, input_path, num_alternatives):
+    output_string = ""
+    pap = parse_and_pass(list(range(1, num_alternatives + 1)))
+    # Skip the info file
+    if isinstance(votes_file, str):
+        if not (votes_file == "info.txt"):
+            if rule == "soc":
+                with open(input_path + "/" + votes_file, "r") as file:
+                    for line in file:
+                        result = process_line(line, pap)
+                output_string += str(result) + "\n"
+                output_string += str(sorted(result, reverse = True)) + "\n"
+                return output_string
+    else:
+        if rule == "soc":
+            print("This file looks liek this: " + str(votes_file.readlines()))
+            votes_file.seek(0)
+            for line in votes_file:
+                result = process_line(line, pap)
+            output_string += str(result) + "\n"
+            output_string += str(sorted(result, reverse = True)) + "\n"
+            return output_string
+
+def process_run(input_path, output_path, rule, sampling_bool):
 
     rule = rule.lower().replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
 
-    try:
-        with open(output_path, 'w') as output_file:
-            output_string = ""
+    
+    with open(output_path, 'w') as output_file:
+        output_string = ""
 
-            vote_files = os.listdir(input_path)
+        vote_files = os.listdir(input_path)
+        
+        output_string += "Rule choosen: " + rule + "\n"
+        
+        # Iterate over the files in the folder
+        for votes_file in vote_files:
+
+            num_alternatives = get_number_of_alternatives(input_path + "/" + votes_file)
             
-            output_string += "Rule choosen: " + rule + "\n"
+            if num_alternatives is None:
+                print("Could not find the number of alternatives.")
+                return 1
             
-            # Iterate over the files in the folder
-            for votes_file in vote_files:
-
-                num_alternatives = get_number_of_alternatives(input_path + "/" + votes_file)
-                
-                if num_alternatives is None:
-                    print("Could not find the number of alternatives.")
-                    return 1
-
+            if sampling_bool:
+                num_votes = get_number_of_votes(input_path + "/" + votes_file)
                 pap = parse_and_pass(list(range(1, num_alternatives + 1)))
                 # Skip the info file
                 if (votes_file == "info.txt"):
                     continue
-                if rule == "soc":
-                    with open(input_path + "/" + votes_file, "r") as file:
-                        for line in file:
-                            # Skip the metadata
-                            if (line.startswith("#")):
-                                continue
-                            
-                            if sampling == false:
-                                line = line.replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
-                                line = line[2:]
-                                pap.input_line(line)
-                    result = pap.result()
-                    output_string += str(result) + "\n"
-                    output_string += str(sorted(result, reverse = True)) + "\n"
-            output_file.write(output_string)
-    except Exception as e:
-        print(f"Error creating or writing to {output_path}: {e}")
-        return 1
+                sample = sampling(num_votes // 3)
+                print("Num of ellements: " + str(num_votes // 3))
+                with open(input_path + "/" + votes_file, "r") as file:
+                    for line in file:
+                        if not (line.startswith("#")):
+                            line = line.replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
+                            sample.update_R(line + '\n')
+
+                with tempfile.TemporaryFile(mode='w+', encoding='utf-8') as temp_file:
+                    for item in sample.S:
+                        temp_file.write(item)
+                    temp_file.seek(0)
+                    
+                    output_string += process_file(temp_file, rule, input_path, num_alternatives)
+                    output_file.write(output_string)          
+            else:
+                output_string += process_file(votes_file, rule, input_path, num_alternatives)
+                output_file.write(output_string)
 
 
 def main() -> int:
@@ -148,7 +200,7 @@ def main() -> int:
                 return
             
             # Call the function to process generating votes
-            ProccesGenerating(file_path, num_votes, num_candidates, vote_type)
+            procces_generating(file_path, num_votes, num_candidates, vote_type)
             messagebox.showinfo("Success", f"Votes saved to {file_path}")
         except ValueError as ve:
             messagebox.showerror("Input Error", f"Invalid input: {ve}")
@@ -184,25 +236,18 @@ def main() -> int:
         frame_run.pack()
 
     def submit_run():
-        try:
-            load_path = filedialog.askdirectory()
-            save_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt")])
-            vote_type = run_algorithm.vote_type_var.get()
-            sampling_enabled = run_algorithm.sampling_var.get()
-            
-            if not load_path or not save_path:
-                messagebox.showwarning("Warning", "Paths not properly selected.")
-                return
-            
-            # Call the function to process running the algorithm
-            ProcessRun(load_path, save_path, vote_type, sampling_enabled)
-            messagebox.showinfo("Success", "Algorithm run completed.")
-        except ValueError as ve:
-            messagebox.showerror("Input Error", f"Invalid input: {ve}")
+        load_path = filedialog.askdirectory()
+        save_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt")])
+        vote_type = run_algorithm.vote_type_var.get()
+        sampling_enabled = run_algorithm.sampling_var.get()
+        
+        if not load_path or not save_path:
+            messagebox.showwarning("Warning", "Paths not properly selected.")
             return
-        except Exception as e:
-            messagebox.showerror("Error", f"An unexpected error occurred: {e}")
-            return
+        
+        # Call the function to process running the algorithm
+        process_run(load_path, save_path, vote_type, sampling_enabled)
+        messagebox.showinfo("Success", "Algorithm run completed.")
 
     # Main menu setup
     tk.Label(frame_main, text="Voting System Application", font=("Arial", 20), bg="#f0f0f0").pack(pady=(0, 20))
