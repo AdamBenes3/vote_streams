@@ -12,6 +12,8 @@ from src.vote_rules.fast_rules.misra_gries_scoring_rules import MGSR
 
 from src.sampling import sampling
 
+from src.vote_generator import vote_generator
+
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import tempfile
@@ -50,8 +52,13 @@ def procces_generating(output_path, num_votes, num_candidates, vote_type):
     vote_type = vote_type.lower().replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
 
     try:
+        output = ""
+        if vote_type == "exp" or vote_type == "exponential":
+            output = vote_generator.simulate_voting(num_votes, num_candidates, "exp")
+        if vote_type == "zipf" or vote_type == "zipfian":
+            output = vote_generator.simulate_voting(num_votes, num_candidates, "zipf")
         with open(output_path, 'w') as file:
-            file.write("# testing\n")
+            file.write(output)
     except Exception as e:
         print(f"Error creating or writing to {output_path}: {e}")
         return 1
@@ -178,9 +185,12 @@ def main() -> int:
             generate_votes.entry_candidates = tk.Entry(frame_generate)
             generate_votes.entry_candidates.pack(pady=(0, 10))
 
-            tk.Label(frame_generate, text="Type of Vote (e.g., SOI, SOC):", bg="#f0f0f0").pack()
-            generate_votes.vote_type_var = tk.StringVar(value="SOI")
-            tk.Entry(frame_generate, textvariable=generate_votes.vote_type_var).pack(pady=(0, 10))
+            tk.Label(frame_generate, text="Type of vote distribution:", bg="#f0f0f0", font=("Arial", 14)).pack(anchor="w", padx=10)
+
+            generate_votes.vote_type_var = tk.StringVar(value="Exp")
+            tk.Radiobutton(frame_generate, text="Exponential distribution", variable=generate_votes.vote_type_var, value="Exp", bg="#f0f0f0", font=("Arial", 12)).pack(anchor="w", padx=20)
+            tk.Radiobutton(frame_generate, text="Zipfian distribution", variable=generate_votes.vote_type_var, value="Zipf", bg="#f0f0f0", font=("Arial", 12)).pack(anchor="w", padx=20)
+
 
             tk.Button(frame_generate, text="Submit", command=submit_generate, bg="#4CAF50", fg="white").pack(pady=(0, 10))
             tk.Button(frame_generate, text="Back", command=show_main, bg="#f44336", fg="white").pack(pady=(0, 10))  # Back button
