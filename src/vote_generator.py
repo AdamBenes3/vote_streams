@@ -9,9 +9,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 import scipy.stats as stats
 from typing import Union, List
+from datetime import datetime
 
 def generate_exponential_distribution(lambda_ : int, number_bins : int, number_items : int,
- max_ : int = 1, min_ : int = 0, print_ : bool= False, plot : bool= False, normalize_result : bool = False) -> Union[float, List]:
+ max_: float = None, min_ : int = 0, print_ : bool= False, plot : bool= False, normalize_result : bool = True) -> Union[float, List]:
     """
     Generates an exponential distribution with the specified parameters.
 
@@ -19,7 +20,7 @@ def generate_exponential_distribution(lambda_ : int, number_bins : int, number_i
         lambda_ (int): Rate parameter of the exponential distribution.
         number_bins (int): Number of bins for the result.
         number_items (int): Total number of items to generate.
-        max_ (int, optional): Maximum value for the range. Defaults to 1.
+        max_ (int, optional): Maximum value for the range. Defaults to None.
         min_ (int, optional): Minimum value for the range. Defaults to 0.
         print_ (bool, optional): Whether to print the result. Defaults to False.
         plot (bool, optional): Whether to plot the result. Defaults to False.
@@ -28,6 +29,9 @@ def generate_exponential_distribution(lambda_ : int, number_bins : int, number_i
     Returns:
         Union[float, List]: Normalized or non-normalized result based on the normalize_result flag.
     """
+
+    if max_ is None:
+        max_ = 5 * (1 / lambda_)
     # Generate random numbers from an exponential distribution
     x_points = np.linspace(min_, max_, number_bins + 1)[1:]
 
@@ -67,17 +71,50 @@ def generate_exponential_distribution(lambda_ : int, number_bins : int, number_i
     else:
         return result
 
+def simulate_exponential_voting(number_voters, number_of_alternatives):
+    lambda_ = 0.03508771929824561 # Seems good
+    number_items = 1000000
+    probabilities = generate_exponential_distribution(lambda_, number_of_alternatives, number_items)
 
-lambda_ = 0.03508771929824561
-number_bins = 8
-number_items = 228
-max_ = 134
-min_ = 0
-print_ = False
-plot = True
-normalize_result = True
+    print(probabilities)
+    print()
+    print()
+
+    votes_per_voter = len(probabilities)
+
+    vote_indices = np.random.choice(
+        np.arange(1, votes_per_voter + 1),
+        size=(number_voters, votes_per_voter),
+        p=probabilities
+    )
+
+    current_date = datetime.now().strftime("%Y-%m-%d")
 
 
-result = generate_exponential_distribution(lambda_, number_bins, number_items, max_, min_, print_, plot, normalize_result)
+    file_output = f"""
+# FILE NAME: simulated-votes
+# TITLE: Simulated Voting Data
+# DESCRIPTION: Generated based on a given probability distribution
+# DATA TYPE: 
+# MODIFICATION TYPE: original
+# RELATES TO: 
+# RELATED FILES: 
+# PUBLICATION DATE: {current_date}
+# MODIFICATION DATE: {current_date}
+# NUMBER ALTERNATIVES: {number_of_alternatives}
+# NUMBER VOTERS: {number_voters}
+# NUMBER UNIQUE ORDERS: 
+"""
 
-print(result)
+    for i in range(1, votes_per_voter + 1):
+        file_output += f"# ALTERNATIVE NAME {i}: alternative_{i}\n"
+
+    for i, votes in enumerate(vote_indices, start=1):
+        vote_line = ", ".join(map(str, votes))
+        file_output += f"1: {vote_line}\n"
+
+    file_output = file_output[:-1]
+
+    return file_output
+
+print(simulate_exponential_voting(100, 8))
