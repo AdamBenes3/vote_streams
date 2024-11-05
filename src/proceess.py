@@ -23,6 +23,32 @@ import tempfile
 
 class Process:
 
+    def get_rule(file_path):
+        """Extracts rule."""
+        try:
+            with open(file_path, 'r') as file:
+                for line in file:
+                    # Check if the line starts with the relevant header
+                    if line.startswith("# Rule choosen:"):
+                        result = line.split(":")[1].strip()
+                        return result
+        except Exception as e:
+            print(f"Error reading from {file_path}: {e}")
+            return None
+
+    def get_origin_file(file_path):
+        """Extracts the origin of the file."""
+        try:
+            with open(file_path, 'r') as file:
+                for line in file:
+                    # Check if the line starts with the relevant header
+                    if line.startswith("# Input path:"):
+                        result = line.split(":")[1].strip()
+                        return result
+        except Exception as e:
+            print(f"Error reading from {file_path}: {e}")
+            return None
+
     def get_number_of_alternatives(file_path):
         """Extracts the number of alternatives from the given file."""
         try:
@@ -157,6 +183,25 @@ class Process:
 
     def process_run(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k):
 
+        try:
+            sampling_k = int(sampling_k) if sampling_bool else None
+            misra_k = int(misra_k) if misra_bool else None
+        except ValueError:
+            print("Input Error", "Please enter valid integer values for k.")
+            return
+
+        if sampling_bool and (sampling_k is None or sampling_k <= 0):
+            print("Input Error", "Please enter a valid integer value greater than 0 for k (Sampling).")
+            return
+            
+        if misra_bool and (misra_k is None or misra_k <= 0):
+            print("Input Error", "Please enter a valid integer value greater than 0 for k (Misra-Gries).")
+            return
+        
+        if not input_path or not output_path:
+            print("Warning", "Paths not properly selected.")
+            return
+
         if (sampling_bool and misra_bool):
             print("Cant enable both Sampling and Misra Gries!")
             return
@@ -169,7 +214,7 @@ class Process:
 
             vote_files = os.listdir(input_path)
             
-            output_string += "# Output path: " + os.path.abspath(output_path) + "\n"
+            output_string += "# Input path: " + os.path.abspath(input_path) + "\n"
             output_string += "# Rule choosen: " + rule + "\n"
             
             # Iterate over the files in the folder
@@ -187,7 +232,7 @@ class Process:
                     if (votes_file == "info.txt"):
                         continue
                     sample = sampling(num_votes // sampling_k)
-                    print("Num of elements: " + str(num_votes // 3))
+                    print("Num of elements: " + str(num_votes // sampling_k))
                     with open(input_path + "/" + votes_file, "r") as file:
                         for line in file:
                             if not (line.startswith("#")):
@@ -204,7 +249,7 @@ class Process:
                         for item in sample.S:
                             temp_file.write(item)
                         temp_file.seek(0)
-                        output_string += "# Sampling used! Num of elements: " + str(num_votes // 3) + '\n'
+                        output_string += "# Sampling used! Num of elements: " + str(num_votes // sampling_k) + '\n'
                         output_string += Process.process_file(temp_file, rule, input_path, num_alternatives)
                         output_file.write(output_string)
                 else:
@@ -240,3 +285,21 @@ class Process:
                         output_file.write(output_string)
 
                 
+
+    def process_error(input_path1, input_path2, output_path):
+        output_string = "# First file:" + os.path.abspath(input_path1) + '\n' + "# Second file:" + os.path.abspath(input_path2) + '\n' + "0"
+        origin_path1 = Process.get_origin_file(input_path1)
+        origin_path2 = Process.get_origin_file(input_path2)
+        rule1 = Process.get_rule(input_path1)
+        rule2 = Process.get_rule(input_path2)
+        if (origin_path1 != origin_path2):
+            print("Doesnt come from same file.")
+            return
+        if (rule1 != rule2):
+            print("Doesnt have same rule.")
+            return
+        origin_path = origin_path1
+        rule = rule1
+        with open(output_path, 'w') as output_file:
+            print(origin_path, rule)
+            output_file.write(output_string)
