@@ -5,8 +5,12 @@ main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if main_directory not in sys.path:
     sys.path.append(main_directory)
 
-from src.preflib_vote_parsers.soc import parse_and_pass
-from src.vote_rules.fast_rules.misra_gries_scoring_rules import MGSR
+from src.preflib_vote_parsers.plurality_parse import Plurality_parse
+from src.preflib_vote_parsers.stv_parse import STV_parse
+from src.preflib_vote_parsers.copeland_parse import Copeland_parse
+from src.preflib_vote_parsers.minimax_parse import Minimax_parse
+
+from src.misra_gries import Misra_Gries
 
 from src.sampling import sampling
 
@@ -68,34 +72,94 @@ class Process:
         # Skip the metadata
         if not (line.startswith("#")):
             line = line.replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
-            line = line[2:]
             pap.input_line(line)
-            result = pap.result()
-            return result
+
+    def get_result(pap):
+        result = pap.result()
+        return result
 
     def process_file(votes_file, rule, input_path, num_alternatives):
         output_string = ""
-        pap = parse_and_pass(list(range(1, num_alternatives + 1)))
+        plurality_parse = Plurality_parse(list(range(1, num_alternatives + 1)))
+        stv_parse = STV_parse(list(range(1, num_alternatives + 1)))
+        copeland_parse = Copeland_parse([str(x) for x in range(1, num_alternatives + 1)])
+        minimax_parse = Minimax_parse([str(x) for x in range(1, num_alternatives + 1)])
         # Skip the info file
         if isinstance(votes_file, str):
             if not (votes_file == "info.txt"):
-                if rule == "soc":
+                if rule == "plurality":
                     with open(input_path + "/" + votes_file, "r") as file:
                         for line in file:
-                            result = Process.process_line(line, pap)
+                            Process.process_line(line, plurality_parse)
+                    result = Process.get_result(plurality_parse)
                     output_string += str(result) + "\n"
                     output_string += str(sorted(result, reverse = True)) + "\n"
                     return output_string
+                if rule == "stv":
+                    with open(input_path + "/" + votes_file, "r") as file:
+                        for line in file:
+                            Process.process_line(line, stv_parse)
+                    result = Process.get_result(stv_parse)
+                    output_string += str(result) + "\n"
+                    # output_string += str(sorted(result, reverse = True)) + "\n"
+                    return output_string
+                if rule == "copeland":
+                    with open(input_path + "/" + votes_file, "r") as file:
+                        for line in file:
+                            Process.process_line(line, copeland_parse)
+                    result = Process.get_result(copeland_parse)
+                    output_string += str(result) + "\n"
+                    # output_string += str(sorted(result, reverse = True)) + "\n"
+                    return output_string
+                if rule == "minimax":
+                    with open(input_path + "/" + votes_file, "r") as file:
+                        for line in file:
+                            Process.process_line(line, minimax_parse)
+                    result = Process.get_result(minimax_parse)
+                    output_string += str(result) + "\n"
+                    # output_string += str(sorted(result, reverse = True)) + "\n"
+                    return output_string
+                print("Not valid rule")
         else:
-            if rule == "soc":
+            if rule == "plurality":
                 votes_file.seek(0)
                 for line in votes_file:
-                    result = Process.process_line(line, pap)
+                    Process.process_line(line, plurality_parse)
+                result = Process.get_result(plurality_parse)
                 output_string += str(result) + "\n"
                 output_string += str(sorted(result, reverse = True)) + "\n"
                 return output_string
+            if rule == "stv":
+                votes_file.seek(0)
+                for line in votes_file:
+                    Process.process_line(line, stv_parse)
+                result = Process.get_result(stv_parse)
+                output_string += str(result) + "\n"
+                # output_string += str(sorted(result, reverse = True)) + "\n"
+                return output_string
+            if rule == "copeland":
+                votes_file.seek(0)
+                for line in votes_file:
+                    Process.process_line(line, copeland_parse)
+                result = Process.get_result(copeland_parse)
+                output_string += str(result) + "\n"
+                # output_string += str(sorted(result, reverse = True)) + "\n"
+                return output_string
+            if rule == "minimax":
+                votes_file.seek(0)
+                for line in votes_file:
+                    Process.process_line(line, minimax_parse)
+                result = Process.get_result(minimax_parse)
+                output_string += str(result) + "\n"
+                # output_string += str(sorted(result, reverse = True)) + "\n"
+                return output_string
+            print("Not valid rule")
 
-    def process_run(input_path, output_path, rule, sampling_bool):
+    def process_run(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k):
+
+        if (sampling_bool and misra_bool):
+            print("Cant enable both Sampling and Misra Gries!")
+            return
 
         rule = rule.lower().replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
 
@@ -105,7 +169,8 @@ class Process:
 
             vote_files = os.listdir(input_path)
             
-            output_string += "Rule choosen: " + rule + "\n"
+            output_string += "# Output path: " + os.path.abspath(output_path) + "\n"
+            output_string += "# Rule choosen: " + rule + "\n"
             
             # Iterate over the files in the folder
             for votes_file in vote_files:
@@ -118,25 +183,60 @@ class Process:
                 
                 if sampling_bool:
                     num_votes = Process.get_number_of_votes(input_path + "/" + votes_file)
-                    pap = parse_and_pass(list(range(1, num_alternatives + 1)))
                     # Skip the info file
                     if (votes_file == "info.txt"):
                         continue
-                    sample = sampling(num_votes // 3)
-                    print("Num of ellements: " + str(num_votes // 3))
+                    sample = sampling(num_votes // sampling_k)
+                    print("Num of elements: " + str(num_votes // 3))
                     with open(input_path + "/" + votes_file, "r") as file:
                         for line in file:
                             if not (line.startswith("#")):
                                 line = line.replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
-                                sample.update_R(line + '\n')
+                                
+                                parts = line.split(':')
+                                multiplier = int(parts[0])
+                                vote_data = "1: " + parts[1] + '\n'
+                                # print(vote_data)
+                                for _ in range(multiplier):
+                                    sample.update_R(vote_data)
 
                     with tempfile.TemporaryFile(mode='w+', encoding='utf-8') as temp_file:
                         for item in sample.S:
                             temp_file.write(item)
                         temp_file.seek(0)
-                        
+                        output_string += "# Sampling used! Num of elements: " + str(num_votes // 3) + '\n'
                         output_string += Process.process_file(temp_file, rule, input_path, num_alternatives)
-                        output_file.write(output_string)          
+                        output_file.write(output_string)
                 else:
-                    output_string += Process.process_file(votes_file, rule, input_path, num_alternatives)
-                    output_file.write(output_string)
+                    if misra_bool:
+                        num_votes = Process.get_number_of_votes(input_path + "/" + votes_file)
+                        # Skip the info file
+                        if (votes_file == "info.txt"):
+                            continue
+                        mg = Misra_Gries(misra_k, True)
+                        print("k := " + str(misra_k))
+                        with open(input_path + "/" + votes_file, "r") as file:
+                            for line in file:
+                                if not (line.startswith("#")):
+                                    line = line.replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
+                                    
+                                    parts = line.split(':')
+                                    multiplier = int(parts[0])
+                                    vote_data = "1: " + parts[1] + '\n'
+                                    # print(vote_data)
+                                    for _ in range(multiplier):
+                                        mg.misra_gries_update(vote_data)
+
+                        with tempfile.TemporaryFile(mode='w+', encoding='utf-8') as temp_file:
+                            for item in mg.H:
+                                temp_file.write(item[1])
+
+                            temp_file.seek(0)
+                            output_string += "# Misra Gries used! k := " + str(misra_k) + '\n'
+                            output_string += Process.process_file(temp_file, rule, input_path, num_alternatives)
+                            output_file.write(output_string) 
+                    else:
+                        output_string += Process.process_file(votes_file, rule, input_path, num_alternatives)
+                        output_file.write(output_string)
+
+                

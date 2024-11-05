@@ -8,35 +8,41 @@ if main_directory not in sys.path:
 
 from typing import Union, List
 
+from src.vote_rules.brute_force.plurality import Plurality
+
 from src.vote_rules.brute_force.vector import Vector
 
-class parse_and_pass():
+class Plurality_parse():
     def __init__(self, candidates: List[str]) -> None:
         self.desired_length = len(candidates)
-        self.V = Vector([])
+        self.V = Plurality(self.desired_length)
         return
     
     def input_line(self, line: str) -> None:
-        line = self.string_to_array(line)
+        parts = line.split(':')
+        line = self.string_to_array(parts[1])
         # print(line)
         vote = self.parse(line)
         # print(vote)
-        self.V = self.V + Vector(vote)
+        for _ in range(int(parts[0])):
+            self.V.vote_update(vote)
         return
 
     def result(self) -> str:
-        return self.V.lst
+        return self.V.result.lst
 
     def parse(self, arr):
         counter = 0
         ranked_arr = [0] * (self.desired_length + 1)
         array = arr[::-1]
+        plus = self.desired_length - len(array)
         for item in array:
             # print(array)
             # print(ranked_arr)
-            ranked_arr[array[counter]] = counter
+            ranked_arr[array[counter]] = counter + plus
             counter += 1
-        return ranked_arr[1:]
+        # print(ranked_arr[1:])
+        return Vector(ranked_arr[1:])
     
     def string_to_array(self, input_string):
         # Split the input string by commas and convert each part to an integer

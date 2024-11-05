@@ -9,7 +9,7 @@ from typing import Union, List
 
 from src.vote_rules.brute_force.stv import stv
 
-class parse_and_pass():
+class STV_parse():
     def __init__(self, candidates : List[str]) -> None:
         self.desired_length = len(candidates)
         self.S = stv(candidates, [])
@@ -30,6 +30,7 @@ class parse_and_pass():
     def input_line(self, line : str) -> None:
         nr_of_votes, vote = self.parse(line, self.desired_length)
         for _ in range(nr_of_votes):
+            # print(vote)
             self.S.add_vote(vote)
         return
 

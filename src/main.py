@@ -90,12 +90,27 @@ def run_algorithm(frame_main, frame_generate, frame_run):
         run_algorithm.title_label.pack(pady=(0, 10))
     
     if not hasattr(run_algorithm, 'vote_type_var'):
-        tk.Label(frame_run, text="Type of Vote File (e.g., SOI, SOC):", bg="#f0f0f0").pack()
-        run_algorithm.vote_type_var = tk.StringVar(value="SOI")
+        tk.Label(frame_run, text="Type of Vote Rule (e.g., STV, Plurality):", bg="#f0f0f0").pack()
+        run_algorithm.vote_type_var = tk.StringVar(value="STV")
         tk.Entry(frame_run, textvariable=run_algorithm.vote_type_var).pack(pady=(0, 10))
 
+        # Sampling option
         run_algorithm.sampling_var = tk.BooleanVar(value=False)
-        tk.Checkbutton(frame_run, text="Enable Sampling", variable=run_algorithm.sampling_var, bg="#f0f0f0").pack(pady=(0, 10))
+        run_algorithm.sampling_check = tk.Checkbutton(frame_run, text="Enable Sampling", variable=run_algorithm.sampling_var, bg="#f0f0f0")
+        run_algorithm.sampling_check.pack(pady=(0, 10))
+
+        run_algorithm.sampling_k_entry = tk.Entry(frame_run)
+        tk.Label(frame_run, text="Enter k for Sampling:", bg="#f0f0f0").pack(pady=(0, 5))
+        run_algorithm.sampling_k_entry.pack(pady=(0, 10))
+
+        # Misra-Gries option
+        run_algorithm.misra_var = tk.BooleanVar(value=False)
+        run_algorithm.misra_check = tk.Checkbutton(frame_run, text="Enable Misra-Gries", variable=run_algorithm.misra_var, bg="#f0f0f0")
+        run_algorithm.misra_check.pack(pady=(0, 10))
+
+        run_algorithm.misra_k_entry = tk.Entry(frame_run)
+        tk.Label(frame_run, text="Enter k for Misra-Gries:", bg="#f0f0f0").pack(pady=(0, 5))
+        run_algorithm.misra_k_entry.pack(pady=(0, 10))
 
         tk.Button(frame_run, text="Choose Files and Run", command=lambda: submit_run(frame_main, frame_generate, frame_run), bg="#4CAF50", fg="white").pack(pady=(0, 10))
         tk.Button(frame_run, text="Back", command=lambda: show_main(frame_main, frame_generate, frame_run), bg="#f44336", fg="white").pack(pady=(0, 10))  # Back button
@@ -108,13 +123,28 @@ def submit_run(frame_main, frame_generate, frame_run):
     save_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt")])
     vote_type = run_algorithm.vote_type_var.get()
     sampling_enabled = run_algorithm.sampling_var.get()
+    misra_enabled = run_algorithm.misra_var.get()
+    
+    try:
+        sampling_k = int(run_algorithm.sampling_k_entry.get()) if sampling_enabled else None
+        misra_k = int(run_algorithm.misra_k_entry.get()) if misra_enabled else None
+    except ValueError:
+        messagebox.showerror("Input Error", "Please enter valid integer values for k.")
+        return
+
+    if sampling_enabled and (sampling_k is None or sampling_k <= 0):
+        messagebox.showerror("Input Error", "Please enter a valid integer value greater than 0 for k (Sampling).")
+        return
+        
+    if misra_enabled and (misra_k is None or misra_k <= 0):
+        messagebox.showerror("Input Error", "Please enter a valid integer value greater than 0 for k (Misra-Gries).")
+        return
     
     if not load_path or not save_path:
         messagebox.showwarning("Warning", "Paths not properly selected.")
         return
     
-    # Call the function to process running the algorithm
-    Process.process_run(load_path, save_path, vote_type, sampling_enabled)
+    Process.process_run(load_path, save_path, vote_type, sampling_enabled, misra_enabled, sampling_k, misra_k)
     messagebox.showinfo("Success", "Algorithm run completed.")
 
 def main() -> int:

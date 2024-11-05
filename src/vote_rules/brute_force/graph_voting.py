@@ -9,7 +9,7 @@ from src.vote_rules.brute_force.graph import Graph, Vertex
 from typing import List
 
 class graph_voting():
-    def initialize_complete_graph(vertecies : List[str]) -> Graph:
+    def __init__(self, vertecies : List[str]) -> None:
         """
         Inicilize the complete graph (easy to do just by putting there the first vote :))
         """
@@ -22,9 +22,9 @@ class graph_voting():
             for i in V:
                 if v != i:
                     v.add_neighbour({i : 0})
-        G = Graph(V)
-        return G
-    def process_vote(G : Graph, vote : str) -> Graph:
+        self.G = Graph(V)
+        return
+    def process_vote(self, vote : List[str]) -> Graph:
         """
         Compute weight on neighbours
         """
@@ -34,29 +34,29 @@ class graph_voting():
                 # We do not want to count them twice
                 if idx_i < idx_j:
                     # Compute who was before who
-                    x = G.get_value_between(i, j) + 1
-                    G.update_value(i, j, x)
-                    x = G.get_value_between(j, i) - 1
-                    G.update_value(j, i, x)
-        return G
-    def voting(votes : List[str], G : Graph) -> Graph:
+                    x = self.G.get_value_between(i, j) + 1
+                    self.G.update_value(i, j, x)
+                    x = self.G.get_value_between(j, i) - 1
+                    self.G.update_value(j, i, x)
+        return self.G
+    def voting(self, votes : List[List[str]]) -> Graph:
         """
         Apply all votes
         """
         # For every vote
         for vote in votes:
             # For every tuple in vote
-            graph_voting.process_vote(G, vote)
-        return G
-    def copeland_winner(G : Graph) -> Vertex:
+            self.process_vote(vote)
+        return self.G
+    def copeland_winner(self) -> Vertex:
         """
         Find the candidate with most wins against others
         """
         # Inicilize with first candidate
-        best_vertex = G.V[0]
+        best_vertex = self.G.V[0]
         # Set best_counter to be bad (so someone for sure will be better)
         best_counter = float('-inf')
-        for v in G.V:
+        for v in self.G.V:
             positive_counter = 0
             # We look at neighbours
             for n in v.neighbours:
@@ -69,15 +69,15 @@ class graph_voting():
                 best_counter = positive_counter
                 best_vertex = v
         return str(best_vertex)
-    def minimax_condorcet_winner(G : Graph) -> Vertex:
+    def minimax_condorcet_winner(self) -> Vertex:
         """
         Find the candidate with best worst matchup
         """
         # Inicilize with first candidate
-        best_vertex = G.V[0]
+        best_vertex = self.G.V[0]
         # Set best_counter to be bad (so someone for sure will be better)
         best_counter = float('-inf')
-        for v in G.V:
+        for v in self.G.V:
             # Worst matchup for this vertex
             worst_matchup = float('inf')
             # We look at neighbours

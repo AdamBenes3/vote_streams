@@ -52,7 +52,8 @@ class stv:
                     break
         return worst_candidate
 
-    def remove_worst(self) -> None:
+    def remove_worst(self):
+        # print("Hledame nejhorsiho:")
         # Find the worst candidate
         worst = self.find_worst_candidate()
         # From every vote remove the worst candidate
@@ -60,14 +61,21 @@ class stv:
             if worst in vote:
                 index = vote.index(worst)
                 vote.pop(index)
+            # print(vote)
         # Remove worst from candidates also
         index = self.candidates.index(worst)
         self.candidates.pop(index)
         self.nr_of_candidates -= 1
-        return
+        return worst
 
     def stv(self) -> int:
+        result = []
         # Simply find the winner
         while self.nr_of_candidates > 1:
-            self.remove_worst()
-        return self.candidates[0]
+            x = self.remove_worst()
+            result = [x] + result
+            # print("Nejhorsi:" + str(x))
+        # print(self.candidates[0])
+        result = self.candidates + result
+        # print(result)
+        return result
