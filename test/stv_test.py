@@ -32,6 +32,13 @@ class stv_test(unittest.TestCase):
         S = stv(candidates, votes)
         expected_output_3 = 5  # Expected output dictionary
         self.assertEqual(S.stv(), expected_output_3)
+    
+    def test_stv4(self):
+        candidates = [1, 2, 3]
+        votes = [[1, 2, 3], [1, 2], [1], [1, 2, 3]]
+        S = stv(candidates, votes)
+        expected_output_3 = 1  # Expected output dictionary
+        self.assertEqual(S.stv(), expected_output_3)
         
         
 
