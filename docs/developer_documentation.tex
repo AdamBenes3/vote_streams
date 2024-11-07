@@ -36,7 +36,7 @@
 \graphicspath{ {../images/} }
 \def\columnseprulecolor{\color{black}}
 \setlength{\columnseprule}{0.3pt}
-\def\title{Specification}
+\def\title{Developer documentation}
 \def\author{Adam Beneš}
 \setlength{\parindent}{0pt}
 \def\doubleunderline#1{\underline{\underline{#1}}}\makeatletter
@@ -116,97 +116,104 @@
 	\pagenumbering{arabic}
 	\pagebreak
 	
-	\chapter{Introduction}
+	\chapter{File tree}
 	
-	\section{Rough specification of the project}
+	\begin{Verbatim}[fontsize=\small]
+.
++-- docs
+|   +-- developer_documentation
+|   |   +-- developer_documentation.pdf
+|   |   +-- developer_documentation.tex
+|   +-- specification
+|   |   +-- specification.pdf
+|   |   +-- specification.tex
+|   +-- user_documentation
+|       +-- error_finder.png
+|       +-- generate_votes.png
+|       +-- run_algorithm.png
+|       +-- save_as.png
+|       +-- user_documentation.pdf
+|       +-- user_documentation.tex
+|       +-- user_interface_mane.png
++-- README.md
++-- src
+|   +-- main.py
+|   +-- misra_gries.py
+|   +-- preflib_vote_parsers
+|   |   +-- copeland_parse.py
+|   |   +-- minimax_parse.py
+|   |   +-- plurality_parse.py
+|   |   +-- stv_parse.py
+|   +-- proceess.py
+|   +-- sampling.py
+|   +-- vote_generator.py
+|   +-- vote_rules
+|       +-- brute_force
+|           +-- graph.py
+|           +-- graph_voting.py
+|           +-- plurality.py
+|           +-- stv.py
+|           +-- vector.py
++-- test
+    +-- all_test.py
+    +-- graph_voting_test.py
+    +-- misra_gries_test.py
+    +-- plurality_test.py
+    +-- sampling_test.py
+    +-- stv_test.py
+	\end{Verbatim}
 	
-	Create an election processing program with different election rules, elections will be processed using streaming algorithms.
+	This is whole file tree of the project, but we will focus just on "src"\ and "test"\ folders. That means this:
 	
-	\section{Where is the project stored}
+	\newpage
 	
-	Project is stored at \href{https://gitlab.com/adam_b3n3s/vote_streams}{Gitlab} and at this \href{https://github.com/AdamBenes3/vote_streams}{Github}.
+		\begin{Verbatim}[fontsize=\small]
++-- src
+|   +-- main.py
+|   +-- misra_gries.py
+|   +-- preflib_vote_parsers
+|   |   +-- copeland_parse.py
+|   |   +-- minimax_parse.py
+|   |   +-- plurality_parse.py
+|   |   +-- stv_parse.py
+|   +-- proceess.py
+|   +-- sampling.py
+|   +-- vote_generator.py
+|   +-- vote_rules
+|       +-- brute_force
+|           +-- graph.py
+|           +-- graph_voting.py
+|           +-- plurality.py
+|           +-- stv.py
+|           +-- vector.py
++-- test
+    +-- all_test.py
+    +-- graph_voting_test.py
+    +-- misra_gries_test.py
+    +-- plurality_test.py
+    +-- sampling_test.py
+    +-- stv_test.py
+	\end{Verbatim}
 	
-	\chapter{More detailed specifications}
+	\chapter{SRC}
 	
-	\section{Libraries}
+	\chapter{Test}
 	
-	\begin{itemize}
-		\item \href{https://github.com/PrefLib}{Preflib}.
-		\item ...
-	\end{itemize}
+	Tests are basic unit tests, that looks something like this:
 	
-	\section{Resources}
+	\begin{lstlisting}
+import unittest
+from src.vote_rules.brute_force.stv import stv
+
+def test_stv1(self):
+	candidates = [1, 2, 3, 4, 5]
+	votes = [[4, 2, 3, 1, 5], [3, 1, 2, 4, 5], [4, 1, 3, 5, 2], [5, 1, 3, 2, 4]]
+	S = stv(candidates, votes)
+	expected_output_1 = [4, 3, 5, 1, 2]  # Expected output dictionary
+	self.assertEqual(S.stv(), expected_output_1)
+	\end{lstlisting}
 	
-	\begin{itemize}
-		\item \href{http://dimacs.rutgers.edu/~graham/ssbd.html}{Book about streaming algorithms}.
-		\item \href{https://dl.acm.org/doi/pdf/10.1145/198429.198435 }{Paper reservoir sampling}.
-		\item \href{https://en.wikipedia.org/wiki/Reservoir_sampling}{Wiki reservoir sampling}.
-		\item ...
-	\end{itemize}
-	
-	\section{Algorithms}
-	
-	\begin{itemize}
-		\item Misra-Gries algorithm.
-		\item Reservoir sampling algorithms.
-		\item ...
-	\end{itemize}
-	
-	\section{Decomposition of the project}
-	
-	\subsection{File tree}
-	
-	\begin{itemize}
-		\item src:
-		
-		Contains all source code.
-		
-		\item docs:
-		
-		Contains .tex files related to the project, specifications, user documentation, developer documentation. All at least in thesse languages:
-		
-		\begin{itemize}
-			\item English.
-		\end{itemize}
-		
-		\item test:
-		
-		Contains function tests in src.
-	\end{itemize}
-	
-	\subsection{Dekomposition of src}
-	
-	\subsubsection{main.py}
-	
-	This is the main method it will read data from a file, call functions from other Python files that will contain individual voting stream algorithms, and more.
-	
-	\subsubsection{vote\_generator.py}
-	
-	This is a file that will generate choices, in various ways:
-	
-	\begin{itemize}
-		\item Exponential distribution.
-		\item Normal distribution (Gaussian curve).
-		\item ...
-	\end{itemize}
-	
-	\subsection{Files of individual election rules}
-	
-	In the file vote\_rules. It contains the implementation of individual election rules.
-	
-	\subsection{Sampling algorithms}
-	
-	Selection of smaller number of tickets.
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	The only not so easy tests ware tests for sampling, since sampling is randomized, so we needed to add something called error marginand run it on big enough data,. That basicly means, how much error we allow, so we let error margin be $0.09$.
 	
 	
 \end{document}
