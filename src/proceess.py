@@ -20,7 +20,8 @@ import tempfile
 
 class Process:
 
-    def wrong_input(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k):
+    def wrong_input(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int) -> int:
+        """Validates input parameters for processing votes. Returns 1 if validation fails, else 0."""
         try:
             sampling_k = int(sampling_k) if sampling_bool else None
             misra_k = int(misra_k) if misra_bool else None
@@ -39,9 +40,11 @@ class Process:
         if (sampling_bool and misra_bool):
             print("Cant enable both Sampling and Misra Gries!")
             return 1
+        return 0
 
 
-    def aply_sampling_or_misra(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, sample_or_mg, votes_file, num_votes, num_alternatives):
+    def aply_sampling_or_misra(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int, sample_or_mg: any, votes_file: str, num_votes: int, num_alternatives: int) -> str:
+        """Applies either Sampling or Misra-Gries algorithm to process votes. Returns formatted result as a string."""
         with open(input_path + "/" + votes_file, "r") as file:
             for line in file:
                 if not (line.startswith("#")):
@@ -50,7 +53,6 @@ class Process:
                     parts = line.split(':')
                     multiplier = int(parts[0])
                     vote_data = "1: " + parts[1] + '\n'
-                    # print(vote_data)
                     for _ in range(multiplier):
                         if isinstance(sample_or_mg, sampling):
                             sample_or_mg.update_R(vote_data)
@@ -70,19 +72,21 @@ class Process:
             output_string += Process.process_file(temp_file, rule, input_path, num_alternatives)
             return output_string
 
-    def aply_sampling(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, votes_file, num_alternatives):
+    def aply_sampling(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int, votes_file: str, num_alternatives: int) -> str:
+        """Initializes and applies Sampling algorithm for vote processing. Returns formatted result as a string."""
         num_votes = int(Process.get_line_second_part(input_path + "/" + votes_file, "# NUMBER VOTERS:"))
         sample = sampling(num_votes // sampling_k)
         print("Num of elements: " + str(num_votes // sampling_k))
         return Process.aply_sampling_or_misra(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, sample, votes_file, num_votes, num_alternatives)
 
-    def aply_misra_gries(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, votes_file, num_alternatives):
+    def aply_misra_gries(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int, votes_file: str, num_alternatives: int) -> str:
+        """Initializes and applies Misra-Gries algorithm for vote processing. Returns formatted result as a string."""
         num_votes = int(Process.get_line_second_part(input_path + "/" + votes_file, "# NUMBER VOTERS:"))
         mg = Misra_Gries(misra_k, True)
         print("k := " + str(misra_k))
         return Process.aply_sampling_or_misra(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, mg, votes_file, num_votes, num_alternatives)
 
-    def get_line_second_part(file_path, line):
+    def get_line_second_part(file_path: str, line: str) -> str:
         """Extracts lines second part (important part)."""
         try:
             with open(file_path, 'r') as file:
@@ -93,9 +97,9 @@ class Process:
                         return result
         except Exception as e:
             print(f"Error reading from {file_path}: {e}")
-            return None
 
-    def aply_one_rule(pap, file):
+    def aply_one_rule(pap: any, file: any) -> str:
+        """Applies a voting rule to the provided file. Returns the results formatted as a string."""
         for line in file:
             Process.process_line(line, pap)
         result = Process.get_result(pap)
@@ -104,17 +108,20 @@ class Process:
         return output_string
 
 
-    def process_line(line, pap):
+    def process_line(line: str, pap: any) -> None:
+        """Processes a single line in the voting data, sending it to the specified parser (pap) if it contains vote data."""
         # Skip the metadata
         if not (line.startswith("#")):
             line = line.replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
             pap.input_line(line)
 
-    def get_result(pap):
+    def get_result(pap: any) -> any:
+        """Retrieves and returns the result of processed votes from the parser (pap)."""
         result = pap.result()
         return result
 
-    def process_file(votes_file, rule, input_path, num_alternatives):
+    def process_file(votes_file: any, rule: str, input_path: str, num_alternatives: int) -> str:
+        """Processes a file using a specified voting rule. Returns formatted results as a string."""
         plurality_parse = Plurality_parse(list(range(1, num_alternatives + 1)))
         stv_parse = STV_parse(list(range(1, num_alternatives + 1)))
         copeland_parse = Copeland_parse([str(x) for x in range(1, num_alternatives + 1)])
@@ -132,7 +139,6 @@ class Process:
                         output_string = Process.aply_one_rule(copeland_parse, file)
                     if rule == "minimax":
                         output_string = Process.aply_one_rule(minimax_parse, file)
-                    
         else:
             votes_file.seek(0)
             if rule == "plurality":
@@ -145,7 +151,8 @@ class Process:
                 output_string = Process.aply_one_rule(minimax_parse, votes_file)
         return output_string
 
-    def procces_generating(output_path, num_votes, num_candidates, vote_type):
+    def procces_generating(output_path: str, num_votes: int, num_candidates: int, vote_type: str) -> int:
+        """Generates votes based on specified parameters and saves to a file. Returns 1 if an error occurs, else 0."""
         vote_type = vote_type.lower().replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
         try:
             output = ""
@@ -155,14 +162,16 @@ class Process:
                 output = vote_generator.simulate_voting(num_votes, num_candidates, "zipf")
             with open(output_path, 'w') as file:
                 file.write(output)
+            return 0
         except Exception as e:
             print(f"Error creating or writing to {output_path}: {e}")
             return 1
 
-    def process_run(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k):
+    def process_run(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int) -> int:
+        """Runs the main vote processing workflow with the specified parameters, including Sampling or Misra-Gries if enabled."""
         error = Process.wrong_input(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k)
         if error == 1:
-            return     
+            return 1
         rule = rule.lower().replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
         sampling_k = int(sampling_k)
         misra_k = int(misra_k)
@@ -188,10 +197,12 @@ class Process:
                     else:
                         output_string += Process.process_file(votes_file, rule, input_path, num_alternatives)
                         output_file.write(output_string)
+        return 0
 
     
 
-    def process_error(input_path1, input_path2, output_path):
+    def process_error(input_path1: str, input_path2: str, output_path: str) -> int:
+        """Compares two processed files. Outputs results and errors to a specified file."""
         output_string = "# First file:" + os.path.abspath(input_path1) + '\n' + "# Second file:" + os.path.abspath(input_path2) + '\n' + "0"
         origin_path1 = Process.get_line_second_part(input_path1,"# Input path:")
         origin_path2 = Process.get_line_second_part(input_path2, "# Input path:")
@@ -199,12 +210,13 @@ class Process:
         rule2 = Process.get_line_second_part(input_path2, "# Rule choosen:")
         if (origin_path1 != origin_path2):
             print("Doesnt come from same file.")
-            return
+            return 1
         if (rule1 != rule2):
             print("Doesnt have same rule.")
-            return
+            return 1
         origin_path = origin_path1
         rule = rule1
         with open(output_path, 'w') as output_file:
             print(origin_path, rule)
             output_file.write(output_string + "\n")
+        return 0
