@@ -18,6 +18,8 @@ from src.vote_generator import vote_generator
 
 import tempfile
 
+import time
+
 class Process:
 
     def wrong_input(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int) -> int:
@@ -111,12 +113,16 @@ class Process:
 
     def aply_one_rule(pap: any, file: any) -> str:
         """Applies a voting rule to the provided file. Returns the results formatted as a string."""
+        # Measure time
+        time_before = time.time()
         for line in file:
             # Process each line using the parser
             Process.process_line(line, pap)
         # Get the result of processing
         result = Process.get_result(pap)
-        output_string = str(result) + "\n"
+        time_after = time.time()
+        output_string = "# Time computing: " + str(time_after - time_before) + "\n"
+        output_string += str(result) + "\n"
         return output_string
 
 
@@ -147,7 +153,7 @@ class Process:
             if not (votes_file == "info.txt"):
                 with open(input_path + "/" + votes_file, "r") as file:
                     if rule == "plurality":
-                        output_string = Process.aply_rule(plurality_parse, file)
+                        output_string = Process.aply_one_rule(plurality_parse, file)
                     if rule == "stv":
                         output_string = Process.aply_one_rule(stv_parse, file)
                     if rule == "copeland":
@@ -157,7 +163,7 @@ class Process:
         else:
             votes_file.seek(0)
             if rule == "plurality":
-                output_string = Process.aply_rule(plurality_parse, votes_file)
+                output_string = Process.aply_one_rule(plurality_parse, votes_file)
             if rule == "stv":
                 output_string = Process.aply_one_rule(stv_parse, votes_file)
             if rule == "copeland":
@@ -192,13 +198,24 @@ class Process:
         rule = rule.lower().replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
         sampling_k = int(sampling_k)
         misra_k = int(misra_k)
-        with open(output_path, 'w') as output_file:
-            # Get list of vote files
-            vote_files = os.listdir(input_path)
-            output_string = "# Input path: " + os.path.abspath(input_path) + "\n"
+        # Get list of vote files
+        vote_files = os.listdir(input_path)
+        # Iterate over the files in the folder
+        nr = 0
+        for votes_file in vote_files:
+            output_string = "# Input path: " + os.path.abspath(input_path) + "/" + votes_file + "\n"
             output_string += "# Rule choosen: " + rule + "\n"
-            # Iterate over the files in the folder
-            for votes_file in vote_files:
+            # Check if the output path has an extension
+            if '.' in output_path:
+                # Separate the base file path and extension if it exists
+                base_path, ext = output_path.rsplit('.', 1)
+                output_filename = f"{base_path}{nr}.{ext}"
+            else:
+                # If no extension, assume ".txt" by default
+                base_path = output_path
+                output_filename = f"{base_path}{nr}.txt"
+            
+            with open(output_filename, 'w') as output_file:
                 # Skip the info file
                 if (votes_file == "info.txt"):
                     continue
@@ -217,6 +234,7 @@ class Process:
                     else:
                         output_string += Process.process_file(votes_file, rule, input_path, num_alternatives)
                         output_file.write(output_string)
+            nr += 1
         return 0
 
     

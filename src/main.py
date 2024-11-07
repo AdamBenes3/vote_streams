@@ -207,7 +207,7 @@ class Main:
         print("""Argumets are:
 -g save_path num_votes num_candidates generate_distribution
 
--r load_path_folder save_path vote_type sampling_enable misra_enable k
+-r load_path save_path vote_type sampling_enable misra_enable k
     (for the \"enable\" write 1 for true and 0 for false)
     (k is used for either divide the number of votes when sampling for example k = 2 is \"half of the votes\" or for misra gries as a parametr)
 
