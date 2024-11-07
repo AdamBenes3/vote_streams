@@ -48,7 +48,11 @@ class Plurality_parse():
         counter = 0
         ranked_arr = [0] * (self.desired_length + 1)
         array = arr[::-1]
+        
+        # If the array is shorter add this
         plus = self.desired_length - len(array)
+        
+        # Iterate over items in array
         for item in array:
             ranked_arr[array[counter]] = counter + plus
             counter += 1

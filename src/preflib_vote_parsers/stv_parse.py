@@ -33,7 +33,6 @@ class STV_parse():
         parts = vote.split(':')
         numbers = list(map(int, parts[1].split(',')))
         result = numbers + [None] * (length - len(numbers))
-        
         return int(parts[0]), result
 
     def input_line(self, line: str) -> None:
