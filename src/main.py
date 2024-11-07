@@ -182,13 +182,13 @@ class Main:
 
     def print_help_messege():
         print("""Argumets are:
-    -g save_path num_votes num_candidates generate_distribution
+-g save_path num_votes num_candidates generate_distribution
 
-    -r load_path_folder save_path vote_type sampling_enable misra_enable k
-        (for the \"enable\" write 1 for true and 0 for false)
-        (k is used for either divide the number of votes when sampling for example k = 2 is \"half of the votes\" or for misra gries as a parametr)
+-r load_path_folder save_path vote_type sampling_enable misra_enable k
+    (for the \"enable\" write 1 for true and 0 for false)
+    (k is used for either divide the number of votes when sampling for example k = 2 is \"half of the votes\" or for misra gries as a parametr)
 
-    -e load_path1 load_path2 save_path""")
+-e load_path1 load_path2 save_path""")
 
     def main() -> int:
 
@@ -197,13 +197,13 @@ class Main:
         if len(args) > 0:
             if args[0] == "generate" or args[0] == "-g":
                 if len(args) != 5:
-                    print_help_messege()
+                    Main.print_help_messege()
                     return 1
                 Process.procces_generating(args[1], int(args[2]), int(args[3]), args[4])
                 return 0
             if args[0] == "run" or args[0] == "-r":
                 if len(args) != 7:
-                    print_help_messege()
+                    Main.print_help_messege()
                     return 1
                 arg4 = True if int(args[4]) == 1 else False
                 arg5 = True if int(args[5]) == 1 else False
@@ -211,12 +211,12 @@ class Main:
                 return 0
             if args[0] == "error" or args[0] == "-e":
                 if len(args) != 4:
-                    print_help_messege()
+                    Main.print_help_messege()
                     return 1
                 Process.process_error(args[1], args[2], args[3])
                 return 0
             else:
-                print_help_messege()
+                Main.print_help_messege()
                 return 1
             
 
