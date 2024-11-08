@@ -68,6 +68,7 @@ class Process:
         with tempfile.TemporaryFile(mode='w+', encoding='utf-8') as temp_file:
             if isinstance(sample_or_mg, sampling):
                 output_string = "# Sampling used! Num of elements: " + str(num_votes // sampling_k) + '\n'
+                output_string += "# Sampling used! k := " + str(sampling_k) + '\n'
                 for item in sample_or_mg.S:
                     # Write sampled votes
                     temp_file.write(item)
@@ -75,7 +76,7 @@ class Process:
                 output_string = "# Misra Gries used! k := " + str(misra_k) + '\n'
                 for item in sample_or_mg.H:
                     # Write Misra-Gries result
-                    temp_file.write(item)
+                    temp_file.write(item[1])
             temp_file.seek(0)
             output_string += Process.process_file(temp_file, rule, input_path, num_alternatives)
             return output_string
@@ -86,7 +87,6 @@ class Process:
         num_votes = int(Process.get_line_second_part(input_path + "/" + votes_file, "# NUMBER VOTERS:"))
         # Initialize Sampling with required size
         sample = sampling(num_votes // sampling_k)
-        print("Num of elements: " + str(num_votes // sampling_k))
         return Process.aply_sampling_or_misra(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, sample, votes_file, num_votes, num_alternatives)
 
     def aply_misra_gries(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int, votes_file: str, num_alternatives: int) -> str:
@@ -95,7 +95,6 @@ class Process:
         num_votes = int(Process.get_line_second_part(input_path + "/" + votes_file, "# NUMBER VOTERS:"))
         # Initialize Misra-Gries
         mg = Misra_Gries(misra_k, True)
-        print("k := " + str(misra_k))
         return Process.aply_sampling_or_misra(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, mg, votes_file, num_votes, num_alternatives)
 
     def get_line_second_part(file_path: str, line: str) -> str:
@@ -140,6 +139,18 @@ class Process:
         result = pap.result()
         return result
 
+    def choose_rule(rule: str, file: any, plurality_parse: any, stv_parse: any, copeland_parse: any, minimax_parse: any) -> str:
+        output_string = ""
+        if rule == "plurality":
+            output_string = Process.aply_one_rule(plurality_parse, file)
+        if rule == "stv":
+            output_string = Process.aply_one_rule(stv_parse, file)
+        if rule == "copeland":
+            output_string = Process.aply_one_rule(copeland_parse, file)
+        if rule == "minimax":
+            output_string = Process.aply_one_rule(minimax_parse, file)
+        return output_string
+
     def process_file(votes_file: any, rule: str, input_path: str, num_alternatives: int) -> str:
         """Processes a file using a specified voting rule. Returns formatted results as a string."""
         # Initialize parsers for different voting rules
@@ -152,24 +163,10 @@ class Process:
             # Skip the info file
             if not (votes_file == "info.txt"):
                 with open(input_path + "/" + votes_file, "r") as file:
-                    if rule == "plurality":
-                        output_string = Process.aply_one_rule(plurality_parse, file)
-                    if rule == "stv":
-                        output_string = Process.aply_one_rule(stv_parse, file)
-                    if rule == "copeland":
-                        output_string = Process.aply_one_rule(copeland_parse, file)
-                    if rule == "minimax":
-                        output_string = Process.aply_one_rule(minimax_parse, file)
+                    output_string = Process.choose_rule(rule, file, plurality_parse, stv_parse, copeland_parse, minimax_parse)
         else:
             votes_file.seek(0)
-            if rule == "plurality":
-                output_string = Process.aply_one_rule(plurality_parse, votes_file)
-            if rule == "stv":
-                output_string = Process.aply_one_rule(stv_parse, votes_file)
-            if rule == "copeland":
-                output_string = Process.aply_one_rule(copeland_parse, votes_file)
-            if rule == "minimax":
-                output_string = Process.aply_one_rule(minimax_parse, votes_file)
+            output_string = Process.choose_rule(rule, votes_file, plurality_parse, stv_parse, copeland_parse, minimax_parse)
         return output_string
 
     def procces_generating(output_path: str, num_votes: int, num_candidates: int, vote_type: str) -> int:
