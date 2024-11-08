@@ -134,7 +134,7 @@ class vote_generator():
         else:
             return result
 
-    def simulate_voting(number_voters, number_of_alternatives, type_dist):
+    def simulate_voting(number_voters: int, number_of_alternatives: int, type_dist: str, file: any) -> None:
         lambda_ = 0.035  # Parameter for exponential distribution
         alpha_ = 1  # Parameter for Zipfian distribution
         number_items = 1000000
@@ -152,7 +152,30 @@ class vote_generator():
 
         vote_indices = []
 
-        for _ in range(number_voters):
+        current_date = datetime.now().strftime("%Y-%m-%d")
+
+        # Prepare file output with metadata and votes
+        metadata = f"""# FILE DISTRIBUTION: {type_dist}
+# TITLE: Simulated Voting Data
+# DESCRIPTION: Generated based on a given probability distribution
+# DATA TYPE: 
+# MODIFICATION TYPE: original
+# RELATES TO: 
+# RELATED FILES: 
+# PUBLICATION DATE: {current_date}
+# MODIFICATION DATE: {current_date}
+# NUMBER ALTERNATIVES: {number_of_alternatives}
+# NUMBER VOTERS: {number_voters}
+# NUMBER UNIQUE ORDERS: 
+"""
+
+        for i in range(1, number_of_alternatives + 1):
+            metadata += f"# ALTERNATIVE NAME {i}: alternative_{i}\n"
+        
+        # Write metadata into file
+        file.write(metadata)
+
+        for i in range(number_voters):
             remaining_candidates = np.arange(1, number_of_alternatives + 1)
             current_probabilities = probabilities.copy()
             vote_order = []
@@ -174,32 +197,11 @@ class vote_generator():
                     current_probabilities /= current_probabilities.sum()
 
             vote_indices.append(vote_order)
-
-        current_date = datetime.now().strftime("%Y-%m-%d")
-
-        # Prepare file output with metadata and votes
-        file_output = f"""# FILE NAME: simulated-votes
-# TITLE: Simulated Voting Data
-# DESCRIPTION: Generated based on a given probability distribution
-# DATA TYPE: 
-# MODIFICATION TYPE: original
-# RELATES TO: 
-# RELATED FILES: 
-# PUBLICATION DATE: {current_date}
-# MODIFICATION DATE: {current_date}
-# NUMBER ALTERNATIVES: {number_of_alternatives}
-# NUMBER VOTERS: {number_voters}
-# NUMBER UNIQUE ORDERS: 
-"""
-
-        for i in range(1, number_of_alternatives + 1):
-            file_output += f"# ALTERNATIVE NAME {i}: alternative_{i}\n"
-
-        for i, votes in enumerate(vote_indices, start=1):
-            vote_line = ", ".join(map(str, votes))
-            file_output += f"1: {vote_line}\n"
-
-        # Trim the last newline if needed
-        file_output = file_output[:-1]
-
-        return file_output
+            vote_line = ", ".join(map(str, vote_order))
+            file_output = f"1: {vote_line}\n"
+            # Write generated vote to output file
+            if i == number_voters-1:
+                # Trim the last newline if needed
+                file_output = file_output[:-1]
+            file.write(file_output)
+        return 0

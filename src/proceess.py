@@ -176,14 +176,11 @@ class Process:
         """Generates votes based on specified parameters and saves to a file. Returns 1 if an error occurs, else 0."""
         vote_type = vote_type.lower().replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
         try:
-            output = ""
-            if vote_type == "exp" or vote_type == "exponential":
-                output = vote_generator.simulate_voting(num_votes, num_candidates, "exp")
-            if vote_type == "zipf" or vote_type == "zipfian":
-                output = vote_generator.simulate_voting(num_votes, num_candidates, "zipf")
             with open(output_path, 'w') as file:
-                # Write generated votes to output file
-                file.write(output)
+                if vote_type == "exp" or vote_type == "exponential":
+                    output = vote_generator.simulate_voting(num_votes, num_candidates, "exp", file)
+                if vote_type == "zipf" or vote_type == "zipfian":
+                    output = vote_generator.simulate_voting(num_votes, num_candidates, "zipf", file)
             return 0
         except Exception as e:
             print(f"Error creating or writing to {output_path}: {e}")
