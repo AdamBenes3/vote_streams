@@ -126,7 +126,7 @@ class Process:
         if isLine:
             output_string += str(result) + "\n"
         else:
-            output_string += "# There was no votes in input"
+            output_string += "# There was 0 votes in input\n"
         return output_string
 
 
