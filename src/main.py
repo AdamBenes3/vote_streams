@@ -68,9 +68,9 @@ class Main:
             file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt")])
             
             # Get the number of votes, number of candidates, and vote distribution type from input fields
-            num_votes = int(generate_votes.entry_votes.get())
-            num_candidates = int(generate_votes.entry_candidates.get())
-            vote_type = generate_votes.vote_type_var.get()
+            num_votes = int(Main.generate_votes.entry_votes.get())
+            num_candidates = int(Main.generate_votes.entry_candidates.get())
+            vote_type = Main.generate_votes.vote_type_var.get()
             
             # If no file path is selected, show a warning
             if not file_path:
