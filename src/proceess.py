@@ -47,7 +47,7 @@ class Process:
 
     def aply_sampling_or_misra(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int, sample_or_mg: any, votes_file: str, num_votes: int, num_alternatives: int) -> str:
         """Applies either Sampling or Misra-Gries algorithm to process votes. Returns formatted result as a string."""
-        with open(input_path + "/" + votes_file, "r") as file:
+        with open(os.path.abspath(votes_file), "r") as file:
             for line in file:
                 # Skip comments or metadata lines
                 if not (line.startswith("#")):
@@ -84,7 +84,7 @@ class Process:
     def aply_sampling(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int, votes_file: str, num_alternatives: int) -> str:
         """Initializes and applies Sampling algorithm for vote processing. Returns formatted result as a string."""
         # Get number of votes
-        num_votes = int(Process.get_line_second_part(input_path + "/" + votes_file, "# NUMBER VOTERS:"))
+        num_votes = int(Process.get_line_second_part(os.path.abspath(votes_file), "# NUMBER VOTERS:"))
         # Initialize Sampling with required size
         sample = sampling(num_votes // sampling_k)
         return Process.aply_sampling_or_misra(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, sample, votes_file, num_votes, num_alternatives)
@@ -92,7 +92,7 @@ class Process:
     def aply_misra_gries(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int, votes_file: str, num_alternatives: int) -> str:
         """Initializes and applies Misra-Gries algorithm for vote processing. Returns formatted result as a string."""
         # Get number of votes
-        num_votes = int(Process.get_line_second_part(input_path + "/" + votes_file, "# NUMBER VOTERS:"))
+        num_votes = int(Process.get_line_second_part(os.path.abspath(votes_file), "# NUMBER VOTERS:"))
         # Initialize Misra-Gries
         mg = Misra_Gries(misra_k, True)
         return Process.aply_sampling_or_misra(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, mg, votes_file, num_votes, num_alternatives)
@@ -114,14 +114,19 @@ class Process:
         """Applies a voting rule to the provided file. Returns the results formatted as a string."""
         # Measure time
         time_before = time.time()
+        isLine = False
         for line in file:
+            isLine = True
             # Process each line using the parser
             Process.process_line(line, pap)
         # Get the result of processing
         result = Process.get_result(pap)
         time_after = time.time()
         output_string = "# Time computing: " + str(time_after - time_before) + "\n"
-        output_string += str(result) + "\n"
+        if isLine:
+            output_string += str(result) + "\n"
+        else:
+            output_string += "# There was no votes in input"
         return output_string
 
 
@@ -162,7 +167,7 @@ class Process:
         if isinstance(votes_file, str):
             # Skip the info file
             if not (votes_file == "info.txt"):
-                with open(input_path + "/" + votes_file, "r") as file:
+                with open(os.path.abspath(votes_file), "r") as file:
                     output_string = Process.choose_rule(rule, file, plurality_parse, stv_parse, copeland_parse, minimax_parse)
         else:
             votes_file.seek(0)
@@ -190,14 +195,16 @@ class Process:
             return 1
         # Normalize rule and other parameters
         rule = rule.lower().replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
-        sampling_k = int(sampling_k)
-        misra_k = int(misra_k)
-        # Get list of vote files
-        vote_files = os.listdir(input_path)
+        if sampling_k != None:
+            sampling_k = int(sampling_k)
+        if misra_k != None:
+            misra_k = int(misra_k)
         # Iterate over the files in the folder
         nr = 0
-        for votes_file in vote_files:
-            output_string = "# Input path: " + os.path.abspath(input_path) + "/" + votes_file + "\n"
+        if type(input_path) != tuple:
+            input_path = [input_path]
+        for votes_file in input_path:
+            output_string = "# Input path: " + os.path.abspath(votes_file) + "\n"
             output_string += "# Rule choosen: " + rule + "\n"
             # Check if the output path has an extension
             if '.' in output_path:
@@ -213,7 +220,7 @@ class Process:
                 # Skip the info file
                 if (votes_file == "info.txt"):
                     continue
-                num_alternatives = int(Process.get_line_second_part(input_path + "/" + votes_file, "# NUMBER ALTERNATIVES:"))
+                num_alternatives = int(Process.get_line_second_part(os.path.abspath(votes_file), "# NUMBER ALTERNATIVES:"))
                 if num_alternatives is None:
                     print("Could not find the number of alternatives.")
                     return 1

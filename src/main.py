@@ -135,7 +135,7 @@ class Main:
         """Submits the algorithm parameters and executes the algorithm with specified options."""
         try:
             # Ask user for directories and file paths
-            load_path = filedialog.askdirectory()
+            load_path = filedialog.askopenfilenames(title="Select one or more files")
             save_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt")])
 
             # Get options for sampling, Misra-Gries, and 'k' values
