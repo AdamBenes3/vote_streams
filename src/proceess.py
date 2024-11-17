@@ -17,10 +17,39 @@ from src.sampling import sampling
 from src.vote_generator import vote_generator
 
 import tempfile
-
 import time
+import ast
 
 class Process:
+
+    def turn_one(result1, current_index):
+        result1[current_index], result1[current_index - 1] = result1[current_index - 1], result1[current_index]
+        return result1
+
+    def mismatch_action(P, result1, result2):
+        index_of_P = result1.index(P)
+        current_index = len(result1) - 1
+        while index_of_P == result1.index(P):
+            print(result1)
+            result1 = Process.turn_one(result1, current_index)
+            current_index -= 1
+        print(result1)
+        print(index_of_P)
+        print(P, result1, result2)
+        return result1, result2
+
+    # Process.stv_error([1, 2, 3], [3, 2, 1])
+    def stv_error(result1, result2, originPath):
+        while result1 != result2:
+            for i in range(1, len(result2) + 1):
+                if result1[-i] != result2[-i]:
+                    result1 = result1[:-i] + [result1[-i]]
+                    result2 = result2[:-i] + [result2[-i]]
+                    P = result2[-i]
+                    result1, result2 = Process.mismatch_action(P, result1, result2)
+                    print("NEW LINE")
+                    break
+        print(result1, result2)
 
     def wrong_input(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int) -> int:
         """Validates input parameters for processing votes. Returns 1 if validation fails, else 0."""
@@ -107,6 +136,18 @@ class Process:
                         # Extract and return the second part
                         result = this_line.split(":")[1].strip()
                         return result
+        except Exception as e:
+            print(f"Error reading from {file_path}: {e}")
+    
+    def get_line(file_path: str, line: str) -> str:
+        """Extracts line."""
+        try:
+            with open(file_path, 'r') as file:
+                for this_line in file:
+                    # Check if the line starts with the relevant header
+                    if this_line.startswith(line):
+                        # Extract and return the second part
+                        return this_line
         except Exception as e:
             print(f"Error reading from {file_path}: {e}")
 
@@ -269,5 +310,11 @@ class Process:
         rule = rule1
         with open(output_path, 'w') as output_file:
             print(origin_path, rule)
+            if rule == "stv":
+                result1 = ast.literal_eval(Process.get_line(input_path1, "["))
+                result2 = ast.literal_eval(Process.get_line(input_path2, "["))
+                # print(result1)
+                # print(result2)
+                Process.stv_error([1, 2, 3], [3, 2, 1], origin_path)
             output_file.write(output_string + "\n")
         return 0
