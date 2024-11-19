@@ -193,7 +193,7 @@ class Process:
 
     def process_error(input_path1: str, input_path2: str, output_path: str) -> int:
         """Compares two processed files. Outputs results and errors to a specified file."""
-        output_string = "# First file:" + os.path.abspath(input_path1) + '\n' + "# Second file:" + os.path.abspath(input_path2) + '\n' + "0"
+        output_string = "# First file:" + os.path.abspath(input_path1) + '\n' + "# Second file:" + os.path.abspath(input_path2) + '\n'
 
         # Get origin path for first file
         origin_path1 = Process.get_line_second_part(input_path1,"# Input path:")
@@ -223,27 +223,34 @@ class Process:
         with open(output_path, 'w') as output_file:
             print(origin_path, rule)
             if rule == "copeland":
-                result1 = ast.literal_eval(Process.get_line(input_path1, "["))
-                result2 = ast.literal_eval(Process.get_line(input_path2, "["))
+                with open(input_path1, 'r') as file:
+                    # Read all lines and filter out empty lines (after stripping whitespace)
+                    non_empty_lines = [line.strip() for line in file if line.strip()]
+                    result1 = non_empty_lines[-1] if non_empty_lines else None
+                with open(input_path2, 'r') as file:
+                    # Read all lines and filter out empty lines (after stripping whitespace)
+                    non_empty_lines = [line.strip() for line in file if line.strip()]
+                    result2 = non_empty_lines[-1] if non_empty_lines else None
                 ERROR = copeland_error.copeland_error(result1, result2, origin_path, nr_candidates)
-                print(ERROR)
-            output_file.write(output_string + "\n")
             if rule == "minimax":
-                result1 = ast.literal_eval(Process.get_line(input_path1, "["))
-                result2 = ast.literal_eval(Process.get_line(input_path2, "["))
+                with open(input_path1, 'r') as file:
+                    # Read all lines and filter out empty lines (after stripping whitespace)
+                    non_empty_lines = [line.strip() for line in file if line.strip()]
+                    result1 = non_empty_lines[-1] if non_empty_lines else None
+                with open(input_path2, 'r') as file:
+                    # Read all lines and filter out empty lines (after stripping whitespace)
+                    non_empty_lines = [line.strip() for line in file if line.strip()]
+                    result2 = non_empty_lines[-1] if non_empty_lines else None
                 ERROR = minimax_error.minimax_error(result1, result2, origin_path, nr_candidates)
-                print(ERROR)
-            output_file.write(output_string + "\n")
             if rule == "plurality":
                 result1 = ast.literal_eval(Process.get_line(input_path1, "["))
                 result2 = ast.literal_eval(Process.get_line(input_path2, "["))
                 ERROR = plurality_error.plurality_error(result1, result2, origin_path, nr_candidates)
-                print(ERROR)
-            output_file.write(output_string + "\n")
             if rule == "stv":
                 result1 = ast.literal_eval(Process.get_line(input_path1, "["))
                 result2 = ast.literal_eval(Process.get_line(input_path2, "["))
                 ERROR = stv_error.stv_error(result1, result2, origin_path, nr_candidates)
-                print(ERROR)
+            # print(ERROR)
+            output_string += "Error: " + str(ERROR)
             output_file.write(output_string + "\n")
         return 0

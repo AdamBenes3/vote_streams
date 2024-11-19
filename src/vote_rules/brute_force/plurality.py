@@ -27,3 +27,8 @@ class Plurality:
             x = Vector(vote)
             self.vote_update(x)
         return str(self.result)
+    def convert_from_result_list_into_ranked_candidates(votes : List[int]) -> List[int]:
+        """
+        Conver list of how much they got votes into sorted from best to worst
+        """
+        return [candidate + 1 for candidate, _ in sorted(enumerate(votes), key=lambda x: x[1], reverse=True)]

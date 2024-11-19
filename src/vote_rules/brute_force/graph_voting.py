@@ -38,6 +38,20 @@ class graph_voting():
                     self.G.update_value(i, j, x)
                     x = self.G.get_value_between(j, i) - 1
                     self.G.update_value(j, i, x)
+
+        all_candidates = self.G.verticies_names
+
+        # Determine absent candidates
+        absent_candidates = set(all_candidates) - set(vote)
+
+        # Treat absent candidates as worse than all listed candidates
+        for candidate in vote:
+            for absent in absent_candidates:
+                x = self.G.get_value_between(candidate, absent) + 1
+                self.G.update_value(candidate, absent, x)
+                x = self.G.get_value_between(absent, candidate) - 1
+                self.G.update_value(absent, candidate, x)
+        
         return self.G
     def voting(self, votes : List[List[str]]) -> Graph:
         """
