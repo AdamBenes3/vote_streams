@@ -5,10 +5,6 @@ main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if main_directory not in sys.path:
     sys.path.append(main_directory)
 
-from src.preflib_vote_parsers.plurality_parse import Plurality_parse
-from src.preflib_vote_parsers.stv_parse import STV_parse
-from src.preflib_vote_parsers.copeland_parse import Copeland_parse
-from src.preflib_vote_parsers.minimax_parse import Minimax_parse
 
 from src.misra_gries import Misra_Gries
 
@@ -16,95 +12,14 @@ from src.sampling import sampling
 
 from src.vote_generator import vote_generator
 
+from src.error_finders.stv_error import stv_error
+
+from src.process_file import Process_file
+
 import tempfile
-import time
 import ast
-import shutil
-import atexit
 
 class Process:
-
-    def remove_comment_lines(input_string):
-        """
-        Removes lines starting with '#' from the input string.
-        """
-        # Split the string into lines, filter out lines starting with '#', and join the result
-        filtered_lines = [line for line in input_string.splitlines() if not line.strip().startswith("#")]
-        return "\n".join(filtered_lines)
-
-    def create_temp_copy(file_path):
-        """
-        Create a temporary copy of the file and ensure it is deleted after the program ends.
-        """
-        # Create a temporary file
-        temp_file = tempfile.NamedTemporaryFile(delete=False)
-        
-        # Copy the content of the original file to the temporary file
-        shutil.copy(file_path, temp_file.name)
-        
-        # Register cleanup function to delete the temp file at program exit
-        def cleanup_temp_file():
-            try:
-                os.remove(temp_file.name)
-                print(f"Temporary file deleted: {temp_file.name}")
-            except FileNotFoundError:
-                pass
-    
-        atexit.register(cleanup_temp_file)
-        
-        print(f"Temporary file created at: {temp_file.name}")
-        return temp_file.name
-
-    def turn_one(result1, current_index, tempt_file, nr_candidates):
-        with open(tempt_file, 'a') as tmp:
-            # print("Co máme tu: " + str(result1[current_index]))
-            tmp.write("1: " + str(result1[current_index]) + '\n')
-        result1 = Process.process_file(tempt_file, "stv", tempt_file, nr_candidates)
-        result1 = Process.remove_comment_lines(result1)
-        result1 = ast.literal_eval(result1)
-        # print("RESULT: " + str(result1))
-        with open(tempt_file, 'r') as tmp:
-            for line in tmp:
-                # print(line)
-                pass
-        return result1
-
-    def mismatch_action(P, result1, result2, tempt_file, nr_candidates, i, ERROR):
-        index_of_P_1 = result1.index(P)
-        index_of_P_2 = result2.index(P)
-        current_index = len(result1) - 1
-        last_P_1 = result1[-i]
-        print("P: " + str(P))
-        print("result1.index(P): " + str(index_of_P_1))
-        print("result2.index(P): " + str(index_of_P_2))
-        print("Before:", result1, result2)
-        while result1.index(P) < result1.index(last_P_1):
-            ERROR += 1
-            result1 = Process.turn_one(result1, result1.index(last_P_1), tempt_file, nr_candidates)
-        # print("A co tady: ", result1, result2)
-        return result1, ERROR
-
-    # Process.stv_error([1, 2, 3], [3, 2, 1])
-    def stv_error(result1, result2, origin_path, nr_candidates):
-        tempt_file = Process.create_temp_copy(origin_path)
-        ERROR = 0
-        while result1 != result2:
-        # for _ in range(1, 4):
-            for i in range(1, len(result2) + 1):
-                # print("i: " + str(i))
-                if result1[-i] != result2[-i]:
-                    # print("i: " + str(i))
-                    P = result2[-i]
-                    result1, ERROR = Process.mismatch_action(P, result1, result2, tempt_file, nr_candidates, i, ERROR)
-                    break
-            print("After:", result1, result2)
-        with open(tempt_file, 'r') as tmp:
-            for line in tmp:
-                print(line, end="")
-                # pass
-        # print(result1, result2)
-        return ERROR
-
     def wrong_input(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int) -> int:
         """Validates input parameters for processing votes. Returns 1 if validation fails, else 0."""
         try:
@@ -161,7 +76,7 @@ class Process:
                     # Write Misra-Gries result
                     temp_file.write(item[1])
             temp_file.seek(0)
-            output_string += Process.process_file(temp_file, rule, input_path, num_alternatives)
+            output_string += Process_file.process_file(temp_file, rule, input_path, num_alternatives)
             return output_string
 
     def aply_sampling(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int, votes_file: str, num_alternatives: int) -> str:
@@ -205,69 +120,7 @@ class Process:
         except Exception as e:
             print(f"Error reading from {file_path}: {e}")
 
-    def aply_one_rule(pap: any, file: any) -> str:
-        """Applies a voting rule to the provided file. Returns the results formatted as a string."""
-        # Measure time
-        time_before = time.time()
-        isLine = False
-        for line in file:
-            isLine = True
-            # Process each line using the parser
-            Process.process_line(line, pap)
-        # Get the result of processing
-        result = Process.get_result(pap)
-        time_after = time.time()
-        output_string = "# Time computing: " + str(time_after - time_before) + "\n"
-        if isLine:
-            output_string += str(result) + "\n"
-        else:
-            output_string += "# There was 0 votes in input\n"
-        return output_string
-
-
-    def process_line(line: str, pap: any) -> None:
-        """Processes a single line in the voting data, sending it to the specified parser (pap) if it contains vote data."""
-        # Skip the metadata
-        if not (line.startswith("#")):
-            line = line.replace(" ", "").replace("\t", "").replace("\n", "").replace("\r", "")
-            # Send vote line to parser
-            pap.input_line(line)
-
-    def get_result(pap: any) -> any:
-        """Retrieves and returns the result of processed votes from the parser (pap)."""
-        # Get result from the parser
-        result = pap.result()
-        return result
-
-    def choose_rule(rule: str, file: any, plurality_parse: any, stv_parse: any, copeland_parse: any, minimax_parse: any) -> str:
-        output_string = ""
-        if rule == "plurality":
-            output_string = Process.aply_one_rule(plurality_parse, file)
-        if rule == "stv":
-            output_string = Process.aply_one_rule(stv_parse, file)
-        if rule == "copeland":
-            output_string = Process.aply_one_rule(copeland_parse, file)
-        if rule == "minimax":
-            output_string = Process.aply_one_rule(minimax_parse, file)
-        return output_string
-
-    def process_file(votes_file: any, rule: str, input_path: str, num_alternatives: int) -> str:
-        """Processes a file using a specified voting rule. Returns formatted results as a string."""
-        # Initialize parsers for different voting rules
-        plurality_parse = Plurality_parse(list(range(1, num_alternatives + 1)))
-        stv_parse = STV_parse(list(range(1, num_alternatives + 1)))
-        copeland_parse = Copeland_parse([str(x) for x in range(1, num_alternatives + 1)])
-        minimax_parse = Minimax_parse([str(x) for x in range(1, num_alternatives + 1)])
-        output_string = ""
-        if isinstance(votes_file, str):
-            # Skip the info file
-            if not (votes_file == "info.txt"):
-                with open(os.path.abspath(votes_file), "r") as file:
-                    output_string = Process.choose_rule(rule, file, plurality_parse, stv_parse, copeland_parse, minimax_parse)
-        else:
-            votes_file.seek(0)
-            output_string = Process.choose_rule(rule, votes_file, plurality_parse, stv_parse, copeland_parse, minimax_parse)
-        return output_string
+    
 
     def procces_generating(output_path: str, num_votes: int, num_candidates: int, vote_type: str) -> int:
         """Generates votes based on specified parameters and saves to a file. Returns 1 if an error occurs, else 0."""
@@ -328,7 +181,7 @@ class Process:
                         output_string += Process.aply_misra_gries(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, votes_file, num_alternatives)
                         output_file.write(output_string)
                     else:
-                        output_string += Process.process_file(votes_file, rule, input_path, num_alternatives)
+                        output_string += Process_file.process_file(votes_file, rule, input_path, num_alternatives)
                         output_file.write(output_string)
             nr += 1
         return 0
@@ -371,7 +224,7 @@ class Process:
                 result2 = ast.literal_eval(Process.get_line(input_path2, "["))
                 # print(result1)
                 # print(result2)
-                ERROR = Process.stv_error(result1, result2, origin_path, nr_candidates)
+                ERROR = stv_error.stv_error(result1, result2, origin_path, nr_candidates)
                 print(ERROR)
             output_file.write(output_string + "\n")
         return 0

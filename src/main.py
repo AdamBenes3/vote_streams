@@ -7,7 +7,7 @@ main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if main_directory not in sys.path:
     sys.path.append(main_directory)
 
-from src.proceess import Process
+from src.process import Process
 
 import tkinter as tk
 from tkinter import filedialog, messagebox
