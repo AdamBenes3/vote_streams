@@ -12,6 +12,9 @@ from src.sampling import sampling
 
 from src.vote_generator import vote_generator
 
+from src.error_finders.copeland_error import copeland_error
+from src.error_finders.minimax_error import minimax_error
+from src.error_finders.plurality_error import plurality_error
 from src.error_finders.stv_error import stv_error
 
 from src.process_file import Process_file
@@ -219,11 +222,27 @@ class Process:
         rule = rule1
         with open(output_path, 'w') as output_file:
             print(origin_path, rule)
+            if rule == "copeland":
+                result1 = ast.literal_eval(Process.get_line(input_path1, "["))
+                result2 = ast.literal_eval(Process.get_line(input_path2, "["))
+                ERROR = copeland_error.copeland_error(result1, result2, origin_path, nr_candidates)
+                print(ERROR)
+            output_file.write(output_string + "\n")
+            if rule == "minimax":
+                result1 = ast.literal_eval(Process.get_line(input_path1, "["))
+                result2 = ast.literal_eval(Process.get_line(input_path2, "["))
+                ERROR = minimax_error.minimax_error(result1, result2, origin_path, nr_candidates)
+                print(ERROR)
+            output_file.write(output_string + "\n")
+            if rule == "plurality":
+                result1 = ast.literal_eval(Process.get_line(input_path1, "["))
+                result2 = ast.literal_eval(Process.get_line(input_path2, "["))
+                ERROR = plurality_error.plurality_error(result1, result2, origin_path, nr_candidates)
+                print(ERROR)
+            output_file.write(output_string + "\n")
             if rule == "stv":
                 result1 = ast.literal_eval(Process.get_line(input_path1, "["))
                 result2 = ast.literal_eval(Process.get_line(input_path2, "["))
-                # print(result1)
-                # print(result2)
                 ERROR = stv_error.stv_error(result1, result2, origin_path, nr_candidates)
                 print(ERROR)
             output_file.write(output_string + "\n")
