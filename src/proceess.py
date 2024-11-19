@@ -19,37 +19,91 @@ from src.vote_generator import vote_generator
 import tempfile
 import time
 import ast
+import shutil
+import atexit
 
 class Process:
 
-    def turn_one(result1, current_index):
-        result1[current_index], result1[current_index - 1] = result1[current_index - 1], result1[current_index]
+    def remove_comment_lines(input_string):
+        """
+        Removes lines starting with '#' from the input string.
+        """
+        # Split the string into lines, filter out lines starting with '#', and join the result
+        filtered_lines = [line for line in input_string.splitlines() if not line.strip().startswith("#")]
+        return "\n".join(filtered_lines)
+
+    def create_temp_copy(file_path):
+        """
+        Create a temporary copy of the file and ensure it is deleted after the program ends.
+        """
+        # Create a temporary file
+        temp_file = tempfile.NamedTemporaryFile(delete=False)
+        
+        # Copy the content of the original file to the temporary file
+        shutil.copy(file_path, temp_file.name)
+        
+        # Register cleanup function to delete the temp file at program exit
+        def cleanup_temp_file():
+            try:
+                os.remove(temp_file.name)
+                print(f"Temporary file deleted: {temp_file.name}")
+            except FileNotFoundError:
+                pass
+    
+        atexit.register(cleanup_temp_file)
+        
+        print(f"Temporary file created at: {temp_file.name}")
+        return temp_file.name
+
+    def turn_one(result1, current_index, tempt_file, nr_candidates):
+        with open(tempt_file, 'a') as tmp:
+            # print("Co máme tu: " + str(result1[current_index]))
+            tmp.write("1: " + str(result1[current_index]) + '\n')
+        result1 = Process.process_file(tempt_file, "stv", tempt_file, nr_candidates)
+        result1 = Process.remove_comment_lines(result1)
+        result1 = ast.literal_eval(result1)
+        # print("RESULT: " + str(result1))
+        with open(tempt_file, 'r') as tmp:
+            for line in tmp:
+                # print(line)
+                pass
         return result1
 
-    def mismatch_action(P, result1, result2):
-        index_of_P = result1.index(P)
+    def mismatch_action(P, result1, result2, tempt_file, nr_candidates, i, ERROR):
+        index_of_P_1 = result1.index(P)
+        index_of_P_2 = result2.index(P)
         current_index = len(result1) - 1
-        while index_of_P == result1.index(P):
-            print(result1)
-            result1 = Process.turn_one(result1, current_index)
-            current_index -= 1
-        print(result1)
-        print(index_of_P)
-        print(P, result1, result2)
-        return result1, result2
+        last_P_1 = result1[-i]
+        print("P: " + str(P))
+        print("result1.index(P): " + str(index_of_P_1))
+        print("result2.index(P): " + str(index_of_P_2))
+        print("Before:", result1, result2)
+        while result1.index(P) < result1.index(last_P_1):
+            ERROR += 1
+            result1 = Process.turn_one(result1, result1.index(last_P_1), tempt_file, nr_candidates)
+        # print("A co tady: ", result1, result2)
+        return result1, ERROR
 
     # Process.stv_error([1, 2, 3], [3, 2, 1])
-    def stv_error(result1, result2, originPath):
+    def stv_error(result1, result2, origin_path, nr_candidates):
+        tempt_file = Process.create_temp_copy(origin_path)
+        ERROR = 0
         while result1 != result2:
+        # for _ in range(1, 4):
             for i in range(1, len(result2) + 1):
+                # print("i: " + str(i))
                 if result1[-i] != result2[-i]:
-                    result1 = result1[:-i] + [result1[-i]]
-                    result2 = result2[:-i] + [result2[-i]]
+                    # print("i: " + str(i))
                     P = result2[-i]
-                    result1, result2 = Process.mismatch_action(P, result1, result2)
-                    print("NEW LINE")
+                    result1, ERROR = Process.mismatch_action(P, result1, result2, tempt_file, nr_candidates, i, ERROR)
                     break
-        print(result1, result2)
+            print("After:", result1, result2)
+        with open(tempt_file, 'r') as tmp:
+            for line in tmp:
+                print(line, end="")
+                # pass
+        # print(result1, result2)
+        return ERROR
 
     def wrong_input(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int) -> int:
         """Validates input parameters for processing votes. Returns 1 if validation fails, else 0."""
@@ -297,6 +351,8 @@ class Process:
         # Get rule for second file
         rule2 = Process.get_line_second_part(input_path2, "# Rule choosen:")
 
+        nr_candidates = int(Process.get_line_second_part(origin_path1, "# NUMBER ALTERNATIVES:"))
+
         # Check if the paths or rules do not match
         if (origin_path1 != origin_path2):
             print("Doesnt come from same file.")
@@ -315,6 +371,7 @@ class Process:
                 result2 = ast.literal_eval(Process.get_line(input_path2, "["))
                 # print(result1)
                 # print(result2)
-                Process.stv_error([1, 2, 3], [3, 2, 1], origin_path)
+                ERROR = Process.stv_error(result1, result2, origin_path, nr_candidates)
+                print(ERROR)
             output_file.write(output_string + "\n")
         return 0
