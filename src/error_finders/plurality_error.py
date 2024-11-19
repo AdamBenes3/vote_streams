@@ -9,13 +9,14 @@ import tempfile
 import shutil
 import atexit
 import ast
+from typing import List
 
 from src.process_file import Process_file
 from vote_rules.brute_force.plurality import Plurality
 
 
 class plurality_error:
-    def remove_comment_lines(input_string):
+    def remove_comment_lines(input_string : str) -> str:
         """
         Removes lines starting with '#' from the input string.
         """
@@ -23,7 +24,7 @@ class plurality_error:
         filtered_lines = [line for line in input_string.splitlines() if not line.strip().startswith("#")]
         return "\n".join(filtered_lines)
 
-    def create_temp_copy(file_path):
+    def create_temp_copy(file_path : str) -> str:
         """
         Create a temporary copy of the file and ensure it is deleted after the program ends.
         """
@@ -46,26 +47,52 @@ class plurality_error:
         print(f"Temporary file created at: {temp_file.name}")
         return temp_file.name
 
-    def turn_one(result1, result2, tempt_file, nr_candidates):
+    def turn_one(result1 : List[str], result2 : List[str], tempt_file : str, nr_candidates : int) -> List[str]:
+        """
+        Processes a single iteration of the Plurality algorithm adjustment.
+
+        Args:
+            result1 (list): Current result from the Plurality computation as a list of candidates.
+            result2 (list): Target result to match, as a list of candidates.
+            tempt_file (str): Path to the temporary file used for computations.
+            nr_candidates (int): Number of candidates in the election.
+
+        Returns:
+            list: Updated result1, converted to ranked candidates format, after processing.
+        """
         result_as_string = ""
         for i in result2:
             result_as_string += str(i) + ","
         result_as_string = result_as_string[:-1]
         with open(tempt_file, 'a') as tmp:
             tmp.write("1: " + result_as_string + '\n')
+        # This updates result1 based on the new contents of the temporary file.
         result1 = Process_file.process_file(tempt_file, "plurality", tempt_file, nr_candidates)
         result1 = plurality_error.remove_comment_lines(result1)
         result1 = ast.literal_eval(result1)
         result1 = Plurality.convert_from_result_list_into_ranked_candidates(result1)
         return result1
 
-    def plurality_error(result1, result2, origin_path, nr_candidates):
+    def plurality_error(result1 : List[str], result2 : List[str], origin_path : str, nr_candidates : int) -> int:
+        """
+        Iteratively adjusts the Plurality computation until the results match.
+
+        Args:
+            result1 (list): Initial result from the Plurality computation, as ranked candidates.
+            result2 (list): Target result to achieve, as ranked candidates.
+            origin_path (str): Path to the original file containing voting data.
+            nr_candidates (int): Number of candidates in the election.
+
+        Returns:
+            int: The number of iterations (errors) required to make the results match.
+        """
         tempt_file = plurality_error.create_temp_copy(origin_path)
         result1 = Plurality.convert_from_result_list_into_ranked_candidates(result1)
         result2 = Plurality.convert_from_result_list_into_ranked_candidates(result2)
         ERROR = 0
         while result1 != result2:
             ERROR += 1
+            # Perform a single adjustment iteration.
             result1 = plurality_error.turn_one(result1, result2, tempt_file, nr_candidates)
         with open(tempt_file, 'r') as tmp:
             for line in tmp:
