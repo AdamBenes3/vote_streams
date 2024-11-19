@@ -211,7 +211,8 @@ class Main:
     (for the \"enable\" write 1 for true and 0 for false)
     (k is used for either divide the number of votes when sampling for example k = 2 is \"half of the votes\" or for misra gries as a parametr)
 
--e load_path1 load_path2 save_path""")
+-e load_path1 load_path2 save_path
+    (load_path1 is the pathe that will be transformed into load_path2)""")
 
     def main() -> int:
         """Main function to handle both command-line arguments and GUI setup."""
