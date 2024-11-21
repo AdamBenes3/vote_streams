@@ -13,16 +13,16 @@ from src.sampling import sampling
 from src.vote_generator import vote_generator
 
 from src.error_finders.copeland_error import copeland_error
-from src.error_finders.minimax_error import minimax_error
+from src.error_finders.maximin_error import maximin_error
 from src.error_finders.plurality_error import plurality_error
 from src.error_finders.stv_error import stv_error
 
-from src.process_file import Process_file
+from src.process_file import process_file
 
 import tempfile
 import ast
 
-class Process:
+class process:
     def wrong_input(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int) -> int:
         """Validates input parameters for processing votes. Returns 1 if validation fails, else 0."""
         try:
@@ -79,24 +79,24 @@ class Process:
                     # Write Misra-Gries result
                     temp_file.write(item[1])
             temp_file.seek(0)
-            output_string += Process_file.process_file(temp_file, rule, input_path, num_alternatives)
+            output_string += process_file.process_file(temp_file, rule, input_path, num_alternatives)
             return output_string
 
     def aply_sampling(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int, votes_file: str, num_alternatives: int) -> str:
         """Initializes and applies Sampling algorithm for vote processing. Returns formatted result as a string."""
         # Get number of votes
-        num_votes = int(Process.get_line_second_part(os.path.abspath(votes_file), "# NUMBER VOTERS:"))
+        num_votes = int(process.get_line_second_part(os.path.abspath(votes_file), "# NUMBER VOTERS:"))
         # Initialize Sampling with required size
         sample = sampling(num_votes // sampling_k)
-        return Process.aply_sampling_or_misra(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, sample, votes_file, num_votes, num_alternatives)
+        return process.aply_sampling_or_misra(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, sample, votes_file, num_votes, num_alternatives)
 
     def aply_misra_gries(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int, votes_file: str, num_alternatives: int) -> str:
         """Initializes and applies Misra-Gries algorithm for vote processing. Returns formatted result as a string."""
         # Get number of votes
-        num_votes = int(Process.get_line_second_part(os.path.abspath(votes_file), "# NUMBER VOTERS:"))
+        num_votes = int(process.get_line_second_part(os.path.abspath(votes_file), "# NUMBER VOTERS:"))
         # Initialize Misra-Gries
         mg = Misra_Gries(misra_k, True)
-        return Process.aply_sampling_or_misra(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, mg, votes_file, num_votes, num_alternatives)
+        return process.aply_sampling_or_misra(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, mg, votes_file, num_votes, num_alternatives)
 
     def get_line_second_part(file_path: str, line: str) -> str:
         """Extracts lines second part (important part)."""
@@ -141,7 +141,7 @@ class Process:
 
     def process_run(input_path: str, output_path: str, rule: str, sampling_bool: bool, misra_bool: bool, sampling_k: int, misra_k: int) -> int:
         """Runs the main vote processing workflow with the specified parameters, including Sampling or Misra-Gries if enabled."""
-        error = Process.wrong_input(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k)
+        error = process.wrong_input(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k)
         if error == 1:
             return 1
         # Normalize rule and other parameters
@@ -171,20 +171,20 @@ class Process:
                 # Skip the info file
                 if (votes_file == "info.txt"):
                     continue
-                num_alternatives = int(Process.get_line_second_part(os.path.abspath(votes_file), "# NUMBER ALTERNATIVES:"))
+                num_alternatives = int(process.get_line_second_part(os.path.abspath(votes_file), "# NUMBER ALTERNATIVES:"))
                 if num_alternatives is None:
                     print("Could not find the number of alternatives.")
                     return 1
                 # Apply either sampling or Misra-Gries, or the selected voting rule
                 if sampling_bool:
-                    output_string += Process.aply_sampling(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, votes_file, num_alternatives)
+                    output_string += process.aply_sampling(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, votes_file, num_alternatives)
                     output_file.write(output_string)
                 else:
                     if misra_bool:
-                        output_string += Process.aply_misra_gries(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, votes_file, num_alternatives)
+                        output_string += process.aply_misra_gries(input_path, output_path, rule, sampling_bool, misra_bool, sampling_k, misra_k, votes_file, num_alternatives)
                         output_file.write(output_string)
                     else:
-                        output_string += Process_file.process_file(votes_file, rule, input_path, num_alternatives)
+                        output_string += process_file.process_file(votes_file, rule, input_path, num_alternatives)
                         output_file.write(output_string)
             nr += 1
         return 0
@@ -196,10 +196,10 @@ class Process:
         output_string = "# First file:" + os.path.abspath(input_path1) + '\n' + "# Second file:" + os.path.abspath(input_path2) + '\n'
 
         # Get origin path for first file
-        origin_path1 = Process.get_line_second_part(input_path1,"# Input path:")
+        origin_path1 = process.get_line_second_part(input_path1,"# Input path:")
 
         # Get origin path for second file
-        origin_path2 = Process.get_line_second_part(input_path2, "# Input path:")
+        origin_path2 = process.get_line_second_part(input_path2, "# Input path:")
 
         # Check if the paths do not match
         if (origin_path1 != origin_path2):
@@ -209,10 +209,10 @@ class Process:
         origin_path = origin_path1
 
         # Get rule for first file
-        rule1 = Process.get_line_second_part(input_path1, "# Rule choosen:")
+        rule1 = process.get_line_second_part(input_path1, "# Rule choosen:")
 
         # Get rule for second file
-        rule2 = Process.get_line_second_part(input_path2, "# Rule choosen:")
+        rule2 = process.get_line_second_part(input_path2, "# Rule choosen:")
 
         # Check if the rules do not match
         if (rule1 != rule2):
@@ -221,7 +221,7 @@ class Process:
         
         rule = rule1
 
-        nr_candidates = int(Process.get_line_second_part(origin_path1, "# NUMBER ALTERNATIVES:"))
+        nr_candidates = int(process.get_line_second_part(origin_path1, "# NUMBER ALTERNATIVES:"))
         
         with open(output_path, 'w') as output_file:
             print(origin_path, rule)
@@ -235,7 +235,7 @@ class Process:
                     non_empty_lines = [line.strip() for line in file if line.strip()]
                     result2 = non_empty_lines[-1] if non_empty_lines else None
                 ERROR = copeland_error.copeland_error(result1, result2, origin_path, nr_candidates)
-            if rule == "minimax":
+            if rule == "maximin":
                 with open(input_path1, 'r') as file:
                     # Read all lines and filter out empty lines (after stripping whitespace)
                     non_empty_lines = [line.strip() for line in file if line.strip()]
@@ -244,14 +244,14 @@ class Process:
                     # Read all lines and filter out empty lines (after stripping whitespace)
                     non_empty_lines = [line.strip() for line in file if line.strip()]
                     result2 = non_empty_lines[-1] if non_empty_lines else None
-                ERROR = minimax_error.minimax_error(result1, result2, origin_path, nr_candidates)
+                ERROR = maximin_error.maximin_error(result1, result2, origin_path, nr_candidates)
             if rule == "plurality":
-                result1 = ast.literal_eval(Process.get_line(input_path1, "["))
-                result2 = ast.literal_eval(Process.get_line(input_path2, "["))
+                result1 = ast.literal_eval(process.get_line(input_path1, "["))
+                result2 = ast.literal_eval(process.get_line(input_path2, "["))
                 ERROR = plurality_error.plurality_error(result1, result2, origin_path, nr_candidates)
             if rule == "stv":
-                result1 = ast.literal_eval(Process.get_line(input_path1, "["))
-                result2 = ast.literal_eval(Process.get_line(input_path2, "["))
+                result1 = ast.literal_eval(process.get_line(input_path1, "["))
+                result2 = ast.literal_eval(process.get_line(input_path2, "["))
                 ERROR = stv_error.stv_error(result1, result2, origin_path, nr_candidates)
             # print(ERROR)
             output_string += "Error: " + str(ERROR)

@@ -9,7 +9,7 @@ from typing import Union, List
 
 from src.vote_rules.brute_force.stv import stv
 
-class STV_parse():
+class stv_parse():
     def __init__(self, candidates: List[str]) -> None:
         """Initializes STV_parse with a list of candidates and sets up the STV voting system.
 
@@ -53,3 +53,4 @@ class STV_parse():
             str: The result of the STV election.
         """
         return self.S.stv()
+

@@ -9,7 +9,7 @@ from typing import Union, List
 
 from src.vote_rules.brute_force.graph_voting import graph_voting
 
-class Copeland_parse():
+class copeland_parse():
     def __init__(self, candidates: List[str]) -> None:
         """Initializes Copeland_parse with a list of candidates, creating a graph-based voting structure."""
         self.S = graph_voting(candidates)

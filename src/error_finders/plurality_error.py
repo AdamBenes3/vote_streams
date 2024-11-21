@@ -11,7 +11,7 @@ import atexit
 import ast
 from typing import List
 
-from src.process_file import Process_file
+from src.process_file import process_file
 from vote_rules.brute_force.plurality import Plurality
 
 
@@ -67,7 +67,7 @@ class plurality_error:
         with open(tempt_file, 'a') as tmp:
             tmp.write("1: " + result_as_string + '\n')
         # This updates result1 based on the new contents of the temporary file.
-        result1 = Process_file.process_file(tempt_file, "plurality", tempt_file, nr_candidates)
+        result1 = process_file.process_file(tempt_file, "plurality", tempt_file, nr_candidates)
         result1 = plurality_error.remove_comment_lines(result1)
         result1 = ast.literal_eval(result1)
         result1 = Plurality.convert_from_result_list_into_ranked_candidates(result1)

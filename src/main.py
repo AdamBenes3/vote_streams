@@ -7,7 +7,7 @@ main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if main_directory not in sys.path:
     sys.path.append(main_directory)
 
-from src.process import Process
+from src.process import process
 
 import tkinter as tk
 from tkinter import filedialog, messagebox
@@ -78,7 +78,7 @@ class Main:
                 return
             
             # Process vote generation and save the results to the selected file
-            Process.procces_generating(file_path, num_votes, num_candidates, vote_type)
+            process.procces_generating(file_path, num_votes, num_candidates, vote_type)
             messagebox.showinfo("Success", f"Votes saved to {file_path}")
         except ValueError as ve:
             messagebox.showerror("Input Error", f"Invalid input: {ve}")
@@ -101,7 +101,7 @@ class Main:
         Main.vote_algorithm.title_label.pack(pady=(0, 10))
         
         # Label and input field for selecting vote rule type (e.g., STV, Plurality)
-        tk.Label(frame_init, text="Type of vote rule (copeland, minimax, plurality, stv):", bg="#f0f0f0").pack()
+        tk.Label(frame_init, text="Type of vote rule (copeland, maximin, plurality, stv):", bg="#f0f0f0").pack()
         Main.vote_algorithm.vote_type_var = tk.StringVar(value="")
         tk.Entry(frame_init, textvariable=Main.vote_algorithm.vote_type_var).pack(pady=(0, 10))
 
@@ -165,7 +165,7 @@ class Main:
             return
         
         # Process and run the algorithm with the given parameters
-        Process.process_run(load_path, save_path, vote_type, sampling_enabled, misra_enabled, sampling_k, misra_k)
+        process.process_run(load_path, save_path, vote_type, sampling_enabled, misra_enabled, sampling_k, misra_k)
         messagebox.showinfo("Success", "Algorithm run completed.")
 
     def error_find(frame_main: tk.Frame, frame_init: tk.Frame) -> None:
@@ -199,7 +199,7 @@ class Main:
             return
         
         # Process the error finding
-        Process.process_error(load_path1, load_path2, save_path)
+        process.process_error(load_path1, load_path2, save_path)
         messagebox.showinfo("Success", "Algorithm run completed.")
 
     def prepere_graphical_user_interface() -> None:
@@ -283,22 +283,22 @@ class Main:
                 if len(args) != 5:
                     Main.print_help_message_generate()
                     return 1
-                return Process.procces_generating(args[1], int(args[2]), int(args[3]), args[4])
+                return process.procces_generating(args[1], int(args[2]), int(args[3]), args[4])
             if args[0] == "run" or args[0] == "-r":
                 if len(args) != 7 and len(args) != 4:
                     Main.print_help_message_run()
                     return 1
                 if len(args) == 4:
-                    return Process.process_run(args[1], args[2], args[3], False, False, -1, -1)
+                    return process.process_run(args[1], args[2], args[3], False, False, -1, -1)
                 arg4 = True if int(args[4]) == 1 else False
                 arg5 = True if int(args[5]) == 1 else False
-                Process.process_run(args[1], args[2], args[3], arg4, arg5, args[6], args[6])
+                process.process_run(args[1], args[2], args[3], arg4, arg5, args[6], args[6])
                 return 0
             if args[0] == "error" or args[0] == "-e":
                 if len(args) != 4:
                     Main.print_help_message_error()
                     return 1
-                return Process.process_error(args[1], args[2], args[3])
+                return process.process_error(args[1], args[2], args[3])
             if args[0] == "graphical" or args[0] == "-gi":
                 Main.prepere_graphical_user_interface()
                 return 0

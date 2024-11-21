@@ -11,7 +11,7 @@ import atexit
 import ast
 from typing import List, Union
 
-from src.process_file import Process_file
+from src.process_file import process_file
 
 class stv_error:
 
@@ -108,7 +108,7 @@ class stv_error:
                     ERROR += 1
                     tmp.write("1: " + str(result1[current_index]) + '\n')
         # Process the temporary file using the STV method.
-        result1 = Process_file.process_file(tempt_file, "stv", tempt_file, nr_candidates)
+        result1 = process_file.process_file(tempt_file, "stv", tempt_file, nr_candidates)
         result1 = stv_error.remove_comment_lines(result1)
         result1 = ast.literal_eval(result1)
         return result1, ERROR

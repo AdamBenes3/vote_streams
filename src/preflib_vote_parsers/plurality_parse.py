@@ -12,7 +12,7 @@ from src.vote_rules.brute_force.plurality import Plurality
 
 from src.vote_rules.brute_force.vector import Vector
 
-class Plurality_parse():
+class plurality_parse():
     def __init__(self, candidates: List[str]) -> None:
         """Initializes Plurality_parse with a list of candidates and sets up the Plurality voting system.
 

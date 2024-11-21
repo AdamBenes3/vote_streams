@@ -9,9 +9,9 @@ from typing import Union, List
 
 from src.vote_rules.brute_force.graph_voting import graph_voting
 
-class Minimax_parse():
+class maximin_parse():
     def __init__(self, candidates: List[str]) -> None:
-        """Initializes Minimax_parse with a list of candidates, setting up a graph-based voting structure."""
+        """Initializes maximin_parse with a list of candidates, setting up a graph-based voting structure."""
         self.S = graph_voting(candidates)
         return
     
@@ -40,9 +40,9 @@ class Minimax_parse():
         return
 
     def result(self) -> str:
-        """Calculates and returns the Minimax Condorcet winner based on votes.
+        """Calculates and returns the maximin Condorcet winner based on votes.
 
         Returns:
-            str: The winner determined by the Minimax Condorcet method.
+            str: The winner determined by the maximin Condorcet method.
         """
-        return self.S.minimax_condorcet_winner()
+        return self.S.maximin_condorcet_winner()

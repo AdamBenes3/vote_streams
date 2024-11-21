@@ -83,7 +83,7 @@ class graph_voting():
                 best_counter = positive_counter
                 best_vertex = v
         return str(best_vertex)
-    def minimax_condorcet_winner(self) -> Vertex:
+    def maximin_condorcet_winner(self) -> Vertex:
         """
         Find the candidate with best worst matchup
         """
