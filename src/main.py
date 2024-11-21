@@ -202,48 +202,8 @@ class Main:
         Process.process_error(load_path1, load_path2, save_path)
         messagebox.showinfo("Success", "Algorithm run completed.")
 
-    def print_help_message() -> None:
-        """Prints help message describing command-line argument usage."""
-        print("""Argumets are:
--g save_path num_votes num_candidates generate_distribution
-
--r load_path save_path vote_type sampling_enable misra_enable k
-    (for the \"enable\" write 1 for true and 0 for false)
-    (k is used for either divide the number of votes when sampling for example k = 2 is \"half of the votes\" or for misra gries as a parametr)
-
--e load_path1 load_path2 save_path
-    (load_path1 is the pathe that will be transformed into load_path2)""")
-
-    def main() -> int:
-        """Main function to handle both command-line arguments and GUI setup."""
-        args = sys.argv[1:]
-
-        # Command-line argument handling
-        if len(args) > 0:
-            if args[0] == "generate" or args[0] == "-g":
-                if len(args) != 5:
-                    Main.print_help_message()
-                    return 1
-                Process.procces_generating(args[1], int(args[2]), int(args[3]), args[4])
-                return 0
-            if args[0] == "run" or args[0] == "-r":
-                if len(args) != 7:
-                    Main.print_help_message()
-                    return 1
-                arg4 = True if int(args[4]) == 1 else False
-                arg5 = True if int(args[5]) == 1 else False
-                Process.process_run(args[1], args[2], args[3], arg4, arg5, args[6], args[6])
-                return 0
-            if args[0] == "error" or args[0] == "-e":
-                if len(args) != 4:
-                    Main.print_help_message()
-                    return 1
-                Process.process_error(args[1], args[2], args[3])
-                return 0
-            else:
-                Main.print_help_message()
-                return 1
-            
+    def prepere_graphical_user_interface() -> None:
+        """Prepere graphical user interface."""
         # GUI setup for the application
         root = tk.Tk()
         root.title("Voting System Application")
@@ -263,7 +223,95 @@ class Main:
 
         # Start the tkinter GUI
         root.mainloop()
-        return 0
+
+    def print_help_message_long() -> None:
+        """Prints help message describing command-line argument usage."""
+        print("""-g/generate [save_path] [num_votes] [num_candidates] [generate_distribution]
+
+-r/run [load_path] [save_path] [vote_type] [sampling_enable] [misra_enable] [k]
+    -- for the [sampling_enable] [misra_enable] write 1 for true and 0 for false.
+    -- k is used for either divide the number of votes when sampling for example k = 2 is \"half of the votes\" or for misra gries as a parametr.
+    -- Optionaly the [sampling_enable] [misra_enable] [k] can be ignored if you dont plan using them.
+
+-e/error [load_path1] [load_path2] [save_path]
+    -- [load_path1] is the pathe that will be transformed into [load_path2].
+
+-gi/graphical
+
+-h/help""")
+
+    def print_help_message_short() -> None:
+        """Prints help message describing command-line argument usage."""
+        print("""-g/generate
+    -- Generate votes with given distribution and save them in file you choose.
+
+-r/run
+    -- Run algorithm to determinate winner from some votes saved in vote file.
+
+-e/error
+    -- Find what is error in some aproximated votes, that is you give it twofiles and it find out by some metric how far they are from each other.
+
+-gi/graphical
+    -- Start graphical interface
+
+-h/help
+    -- Print larger help messege.""")
+
+    def print_help_message_generate() -> None:
+        """Prints help message describing generate."""
+        print("""-g/generate [save_path] [num_votes] [num_candidates] [generate_distribution]""")
+
+    def print_help_message_run() -> None:
+        """Prints help message describing generate."""
+        print("""-r/run [load_path] [save_path] [vote_type] [sampling_enable] [misra_enable] [k]
+    -- for the [sampling_enable] [misra_enable] write 1 for true and 0 for false.
+    -- k is used for either divide the number of votes when sampling for example k = 2 is \"half of the votes\" or for misra gries as a parametr.
+    -- Optionaly the [sampling_enable] [misra_enable] [k] can be ignored if you dont plan using them.""")
+
+    def print_help_message_error() -> None:
+        """Prints help message describing generate."""
+        print("""-e/error [load_path1] [load_path2] [save_path]
+    -- [load_path1] is the pathe that will be transformed into [load_path2].""")
+
+    def main() -> int:
+        """Main function to handle both command-line arguments and GUI setup."""
+        args = sys.argv[1:]
+
+        # Command-line argument handling
+        if len(args) > 0:
+            if args[0] == "generate" or args[0] == "-g":
+                if len(args) != 5:
+                    Main.print_help_message_generate()
+                    return 1
+                return Process.procces_generating(args[1], int(args[2]), int(args[3]), args[4])
+            if args[0] == "run" or args[0] == "-r":
+                if len(args) != 7 and len(args) != 4:
+                    Main.print_help_message_run()
+                    return 1
+                if len(args) == 4:
+                    return Process.process_run(args[1], args[2], args[3], False, False, -1, -1)
+                arg4 = True if int(args[4]) == 1 else False
+                arg5 = True if int(args[5]) == 1 else False
+                Process.process_run(args[1], args[2], args[3], arg4, arg5, args[6], args[6])
+                return 0
+            if args[0] == "error" or args[0] == "-e":
+                if len(args) != 4:
+                    Main.print_help_message_error()
+                    return 1
+                return Process.process_error(args[1], args[2], args[3])
+            if args[0] == "graphical" or args[0] == "-gi":
+                Main.prepere_graphical_user_interface()
+                return 0
+            if args[0] == "help" or args[0] == "-h":
+                Main.print_help_message_long()
+                return 0
+            else:
+                Main.print_help_message_long()
+                return 1
+            
+        Main.print_help_message_short()
+        return 1
 
 if __name__ == "__main__":
-    Main.main()
+    exit_code = Main.main()
+    sys.exit(exit_code)

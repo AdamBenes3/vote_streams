@@ -201,25 +201,28 @@ class Process:
         # Get origin path for second file
         origin_path2 = Process.get_line_second_part(input_path2, "# Input path:")
 
+        # Check if the paths do not match
+        if (origin_path1 != origin_path2):
+            print("Doesnt come from same file.")
+            return 1
+        
+        origin_path = origin_path1
+
         # Get rule for first file
         rule1 = Process.get_line_second_part(input_path1, "# Rule choosen:")
 
         # Get rule for second file
         rule2 = Process.get_line_second_part(input_path2, "# Rule choosen:")
 
-        nr_candidates = int(Process.get_line_second_part(origin_path1, "# NUMBER ALTERNATIVES:"))
-
-        # Check if the paths or rules do not match
-        if (origin_path1 != origin_path2):
-            print("Doesnt come from same file.")
-            return 1
+        # Check if the rules do not match
         if (rule1 != rule2):
             print("Doesnt have same rule.")
             return 1
         
-        # If no errors, write output string
-        origin_path = origin_path1
         rule = rule1
+
+        nr_candidates = int(Process.get_line_second_part(origin_path1, "# NUMBER ALTERNATIVES:"))
+        
         with open(output_path, 'w') as output_file:
             print(origin_path, rule)
             if rule == "copeland":
