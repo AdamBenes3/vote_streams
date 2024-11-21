@@ -62,8 +62,8 @@ class plurality_error:
         """
         result_as_string = ""
         for i in result2:
-            result_as_string += str(i) + ","
-        result_as_string = result_as_string[:-1]
+            result_as_string += str(i) + ", "
+        result_as_string = result_as_string[:-2]
         with open(tempt_file, 'a') as tmp:
             tmp.write("1: " + result_as_string + '\n')
         # This updates result1 based on the new contents of the temporary file.
