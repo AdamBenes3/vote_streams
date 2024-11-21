@@ -34,16 +34,16 @@ class Main:
         Main.clear_frame(frame_init)
 
         # Set up title for the 'Generate Votes' section
-        Main.generate_votes.title_label = tk.Label(frame_init, text="Generate Votes", font=("Arial", 16), bg="#f0f0f0")
+        Main.generate_votes.title_label = tk.Label(frame_init, text="Generate votes", font=("Arial", 16), bg="#f0f0f0")
         Main.generate_votes.title_label.pack(pady=(0, 10))
 
         # Label and entry for the number of votes
-        tk.Label(frame_init, text="Number of Votes:", bg="#f0f0f0").pack()
+        tk.Label(frame_init, text="Number of votes:", bg="#f0f0f0").pack()
         Main.generate_votes.entry_votes = tk.Entry(frame_init)
         Main.generate_votes.entry_votes.pack(pady=(0, 10))
 
         # Label and entry for the number of candidates
-        tk.Label(frame_init, text="Number of Candidates:", bg="#f0f0f0").pack()
+        tk.Label(frame_init, text="Number of candidates:", bg="#f0f0f0").pack()
         Main.generate_votes.entry_candidates = tk.Entry(frame_init)
         Main.generate_votes.entry_candidates.pack(pady=(0, 10))
 
@@ -97,22 +97,22 @@ class Main:
         Main.clear_frame(frame_init)
 
         # Set up title for the 'Run Algorithm' section
-        Main.vote_algorithm.title_label = tk.Label(frame_init, text="Run Algorithm", font=("Arial", 16), bg="#f0f0f0")
+        Main.vote_algorithm.title_label = tk.Label(frame_init, text="Run algorithm", font=("Arial", 16), bg="#f0f0f0")
         Main.vote_algorithm.title_label.pack(pady=(0, 10))
         
         # Label and input field for selecting vote rule type (e.g., STV, Plurality)
-        tk.Label(frame_init, text="Type of Vote Rule (e.g., STV, Plurality):", bg="#f0f0f0").pack()
-        Main.vote_algorithm.vote_type_var = tk.StringVar(value="STV")
+        tk.Label(frame_init, text="Type of vote rule (copeland, minimax, plurality, stv):", bg="#f0f0f0").pack()
+        Main.vote_algorithm.vote_type_var = tk.StringVar(value="")
         tk.Entry(frame_init, textvariable=Main.vote_algorithm.vote_type_var).pack(pady=(0, 10))
 
         # Checkbox for enabling sampling
         Main.vote_algorithm.sampling_var = tk.BooleanVar(value=False)
-        Main.vote_algorithm.sampling_check = tk.Checkbutton(frame_init, text="Enable Sampling", variable=Main.vote_algorithm.sampling_var, bg="#f0f0f0")
+        Main.vote_algorithm.sampling_check = tk.Checkbutton(frame_init, text="Enable sampling", variable=Main.vote_algorithm.sampling_var, bg="#f0f0f0")
         Main.vote_algorithm.sampling_check.pack(pady=(0, 10))
 
         # Input field for specifying 'k' for sampling
         Main.vote_algorithm.sampling_k_entry = tk.Entry(frame_init)
-        tk.Label(frame_init, text="Enter k for Sampling:", bg="#f0f0f0").pack(pady=(0, 5))
+        tk.Label(frame_init, text="Enter k for sampling:", bg="#f0f0f0").pack(pady=(0, 5))
         Main.vote_algorithm.sampling_k_entry.pack(pady=(0, 10))
 
         # Checkbox for enabling Misra-Gries
@@ -126,7 +126,7 @@ class Main:
         Main.vote_algorithm.misra_k_entry.pack(pady=(0, 10))
 
         # Buttons for submitting the algorithm and going back
-        tk.Button(frame_init, text="Choose Files and Run", command=lambda: Main.submit_vote_algorithm(frame_main, frame_init), bg="#4CAF50", fg="white").pack(pady=(0, 10))
+        tk.Button(frame_init, text="Choose files and run", command=lambda: Main.submit_vote_algorithm(frame_main, frame_init), bg="#4CAF50", fg="white").pack(pady=(0, 10))
         tk.Button(frame_init, text="Back", command=lambda: Main.show_main(frame_main, frame_init), bg="#f44336", fg="white").pack(pady=(0, 10))  # Back button
 
         frame_init.pack()
@@ -178,11 +178,11 @@ class Main:
         Main.clear_frame(frame_init)
 
         # Title for the 'Error find' section
-        Main.error_find.title_label = tk.Label(frame_init, text="Error find", font=("Arial", 16), bg="#f0f0f0")
+        Main.error_find.title_label = tk.Label(frame_init, text="Error finder", font=("Arial", 16), bg="#f0f0f0")
         Main.error_find.title_label.pack(pady=(0, 10))
         
         # Button to choose files and run error-finding process
-        tk.Button(frame_init, text="Choose Files and Run", command=lambda: Main.submit_error_find(frame_main, frame_init), bg="#4CAF50", fg="white").pack(pady=(0, 10))
+        tk.Button(frame_init, text="Choose files and run", command=lambda: Main.submit_error_find(frame_main, frame_init), bg="#4CAF50", fg="white").pack(pady=(0, 10))
         tk.Button(frame_init, text="Back", command=lambda: Main.show_main(frame_main, frame_init), bg="#f44336", fg="white").pack(pady=(0, 10))  # Back button
 
         frame_init.pack()
@@ -216,9 +216,9 @@ class Main:
         frame_init = tk.Frame(root, bg="#f0f0f0")
 
         # Add main label and buttons for navigation
-        tk.Label(frame_main, text="Voting System Application", font=("Arial", 20), bg="#f0f0f0").pack(pady=(0, 20))
-        tk.Button(frame_main, text="Generate Votes", command=lambda: Main.generate_votes(frame_main, frame_init), bg="#2196F3", fg="white").pack(pady=10)
-        tk.Button(frame_main, text="Run Algorithm", command=lambda: Main.vote_algorithm(frame_main, frame_init), bg="#2196F3", fg="white").pack(pady=10)
+        tk.Label(frame_main, text="Voting system application", font=("Arial", 20), bg="#f0f0f0").pack(pady=(0, 20))
+        tk.Button(frame_main, text="Generate votes", command=lambda: Main.generate_votes(frame_main, frame_init), bg="#2196F3", fg="white").pack(pady=10)
+        tk.Button(frame_main, text="Run algorithm", command=lambda: Main.vote_algorithm(frame_main, frame_init), bg="#2196F3", fg="white").pack(pady=10)
         tk.Button(frame_main, text="Error finder", command=lambda: Main.error_find(frame_main, frame_init), bg="#2196F3", fg="white").pack(pady=10)
 
         # Start the tkinter GUI
