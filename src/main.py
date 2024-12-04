@@ -56,7 +56,7 @@ class Main:
         tk.Radiobutton(frame_init, text="Zipfian distribution", variable=Main.generate_votes.vote_type_var, value="Zipf", bg="#f0f0f0", font=("Arial", 12)).pack(anchor="w", padx=20)
 
         # Buttons for submitting or going back
-        tk.Button(frame_init, text="Submit", command=lambda: Main.submit_generate(frame_main, frame_init), bg="#4CAF50", fg="white").pack(pady=(0, 10))
+        tk.Button(frame_init, text="Choose files and run", command=lambda: Main.submit_generate(frame_main, frame_init), bg="#4CAF50", fg="white").pack(pady=(0, 10))
         tk.Button(frame_init, text="Back", command=lambda: Main.show_main(frame_main, frame_init), bg="#f44336", fg="white").pack(pady=(0, 10))  # Back button
 
         frame_init.pack()

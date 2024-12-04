@@ -121,9 +121,9 @@
 	\begin{Verbatim}[fontsize=\small]
 .
 +-- docs
-|   +-- developer_documentation
-|   |   +-- developer_documentation.pdf
-|   |   +-- developer_documentation.tex
+|	+-- developer_documentation
+|	|  +-- developer_documentation.pdf
+|	|  +-- developer_documentation.tex
 |   +-- specification
 |   |   +-- specification.pdf
 |   |   +-- specification.tex
@@ -132,19 +132,25 @@
 |       +-- generate_votes.png
 |       +-- run_algorithm.png
 |       +-- save_as.png
+|       +-- user_interface_main.png
 |       +-- user_documentation.pdf
 |       +-- user_documentation.tex
-|       +-- user_interface_mane.png
 +-- README.md
 +-- src
+|   +-- error_finders
+|   |   +-- copeland_error.py
+|   |   +-- maximin_error.py
+|   |   +-- plurality_error.py
+|   |   +-- stv_error.py
 |   +-- main.py
 |   +-- misra_gries.py
 |   +-- preflib_vote_parsers
 |   |   +-- copeland_parse.py
-|   |   +-- minimax_parse.py
+|   |   +-- maximin_parse.py
 |   |   +-- plurality_parse.py
 |   |   +-- stv_parse.py
-|   +-- proceess.py
+|   +-- process_file.py
+|   +-- process.py
 |   +-- sampling.py
 |   +-- vote_generator.py
 |   +-- vote_rules
@@ -155,12 +161,12 @@
 |           +-- stv.py
 |           +-- vector.py
 +-- test
-    +-- all_test.py
-    +-- graph_voting_test.py
-    +-- misra_gries_test.py
-    +-- plurality_test.py
-    +-- sampling_test.py
-    +-- stv_test.py
+	+-- all_test.py
+	+-- graph_voting_test.py
+	+-- misra_gries_test.py
+	+-- plurality_test.py
+	+-- sampling_test.py
+	+-- stv_test.py
 	\end{Verbatim}
 	
 	This is whole file tree of the project, but we will focus just on "src"\ and "test"\ folders. That means this:
@@ -169,14 +175,20 @@
 	
 		\begin{Verbatim}[fontsize=\small]
 +-- src
+|   +-- error_finders
+|   |   +-- copeland_error.py
+|   |   +-- maximin_error.py
+|   |   +-- plurality_error.py
+|   |   +-- stv_error.py
 |   +-- main.py
 |   +-- misra_gries.py
 |   +-- preflib_vote_parsers
 |   |   +-- copeland_parse.py
-|   |   +-- minimax_parse.py
+|   |   +-- maximin_parse.py
 |   |   +-- plurality_parse.py
 |   |   +-- stv_parse.py
-|   +-- proceess.py
+|   +-- process_file.py
+|   +-- process.py
 |   +-- sampling.py
 |   +-- vote_generator.py
 |   +-- vote_rules
@@ -187,12 +199,12 @@
 |           +-- stv.py
 |           +-- vector.py
 +-- test
-    +-- all_test.py
-    +-- graph_voting_test.py
-    +-- misra_gries_test.py
-    +-- plurality_test.py
-    +-- sampling_test.py
-    +-- stv_test.py
+	+-- all_test.py
+	+-- graph_voting_test.py
+	+-- misra_gries_test.py
+	+-- plurality_test.py
+	+-- sampling_test.py
+	+-- stv_test.py
 	\end{Verbatim}
 	
 	\chapter{SRC}
@@ -204,6 +216,8 @@
 	\section{Process}
 	
 	This class is basicly connector between all the other classes, it calls all the algorithms and connect them with the interface.
+	
+	\section{Process file}
 	
 	\section{Misra Gries}
 	
@@ -218,6 +232,16 @@
 	\subsection{Vector + plurality}
 	
 	\subsection{STV}
+	
+	\section{Error finders}
+	
+	\subsection{Copeland error}
+	
+	\subsection{Maximin error}
+	
+	\subsection{Plurality error}
+	
+	\subsection{STV error}
 	
 	\section{Preflb vote parsers}
 	

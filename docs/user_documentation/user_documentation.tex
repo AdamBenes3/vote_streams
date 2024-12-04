@@ -135,7 +135,7 @@
 	If you open the graphical interface, this window will pop up:
 	
 	\begin{center}
-		\includegraphics[width=12cm]{user_interface_mane.png}
+		\includegraphics[width=12cm]{user_interface_main.png}
 	\end{center}
 	
 	\section{Generate votes}
@@ -146,7 +146,7 @@
 		\includegraphics[width=12cm]{generate_votes.png}
 	\end{center}
 	
-	Clicking back will lead you back into main menu. If you put in all the informations and click submit the program will ask where it should save the generated vote file. That looks like this.
+	Clicking back will lead you back into main menu. If you put in all the informations and click "Choose files and run"\ the program will ask where it should save the generated vote file. That looks like this.
 	
 	\begin{center}
 		\includegraphics[width=12cm]{save_as.png}
@@ -162,7 +162,7 @@
 		\includegraphics[width=12cm]{run_algorithm.png}
 	\end{center}
 	
-	In the "Type od Vote Rule"\ you have these options:
+	In the "Type of vote rule"\ you have these options:
 	
 	\begin{itemize}
 		\item STV
@@ -171,7 +171,7 @@
 		\item Copeland
 	\end{itemize}
 	
-	The capitalization of the letters in that doesnt metter. Then you choose if you want to have enabled Sampling or Misra Gries and put there the $k$ for tham. In Sampling $k$ is that every $k$-th vote will be choosen, for $k = 3$ it will be number of votes // $k$. In Misra Gries it is the classical parametr of Misra Gries algorithm. Make sure you dont choose both Sampling and Misra Gries at the same time, then the program wont let you further. Then you click Choose "Files and Run"\ same dialog as in Generate votes will appear for choosing the files, except now you must choose folder for an input, because in folder you can put more files that the algorith will handle. And then save file same as before. And the program will generate the winners.
+	The capitalization of the letters in that doesnt metter. Then you choose if you want to have enabled sampling or Misra Gries and put there the $k$ for tham. In sampling $k$ is that every $k$-th vote will be choosen, for $k = 3$ it will be number of votes // $k$. In Misra Gries it is the classical parametr of Misra Gries algorithm. Make sure you dont choose both sampling and Misra Gries at the same time, then the program wont let you further. Then you click "Choose files and run"\ same dialog as in Generate votes will appear for choosing the files, except now you can choose more files as an input. And then save file same as before. And the program will generate the winners.
 	
 	\section{Error finder}
 	
@@ -181,28 +181,44 @@
 		\includegraphics[width=12cm]{error_finder.png}
 	\end{center}
 	
-	Again just click "Choose Files and run"\ and the program will ask you to put in the $2$ files and $1$ save file, choose them and the rpogram will find the error between them.
+	Again just click "Choose files and run"\ and the program will ask you to put in the $2$ files and $1$ save file, choose them and the rpogram will find the error between them.
 	
 	\chapter{Command line interface}
 	
 	When run with wrong number of arguments the program will output the help messege which is:
 	
 	\begin{lstlisting}
-Argumets are:
--g save_path num_votes num_candidates generate_distribution
+-g/generate
+-- Generate votes with given distribution and save them in file you choose.
 
--r load_path_folder save_path vote_type sampling_enable misra_enable k
-(for the "enable" write 1 for true and 0 for false)
-(k is used for either divide the number of votes when sampling for example k = 2 is "half of the votes" or for misra gries as a parametr)
+-r/run
+-- Run algorithm to determinate winner from some votes saved in vote file.
 
--e load_path1 load_path2 save_path
+-e/error
+-- Find what is error in some aproximated votes, that is you give it twofiles and it find out by some metric how far they are from each other.
+
+-gi/graphical
+-- Start graphical interface
+
+-h/help
+-- Print larger help messege.
 	\end{lstlisting}
 	
-	It basicly works the same as Graphical interface but when -r is used than just one parametr of $k$ is set, thats because we know that not both Sampling and Misra Gries can be used so we use just one.
+	It basicly works the same as Graphical interface but when -r is used than just one parametr of $k$ is set, thats because we know that not both sampling and Misra Gries can be used so we use just one. Also when -r is used also one vote file can be given (then you can run it again on different file). If you give it just the argument (like "-e/error") another help messege will pop up with new help that guides you thru (in this example) -e arguments. Like this:
 	
-	
-	
-	
+	\begin{itemize}
+		\item -g/generate [save\_path] [num\_votes] [num\_candidates] [generate\_distribution].
+		\item -r/run [load\_path] [save\_path] [vote\_type] [sampling\_enable] [misra\_enable] [k]
+		\begin{itemize}
+			\item for the [sampling\_enable] [misra\_enable] write 1 for true and 0 for false.
+			\item k is used for either divide the number of votes when sampling for example k = 2 is "half of the votes"\ or for misra gries as a parametr.
+			\item Optionaly the [sampling\_enable] [misra\_enable] [k] can be ignored if you dont plan using them.
+		\end{itemize}
+		\item -e/error [load\_path1] [load\_path2] [save\_path]
+		\begin{itemize}
+			\item\ [load\_path1] is the pathe that will be transformed into [load\_path2].
+		\end{itemize}
+	\end{itemize}
 	
 	
 \end{document}
