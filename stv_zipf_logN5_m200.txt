@@ -1,0 +1,5 @@
+# Input path: /home/adam/big_projects/vote_streams/gen_zipf_logN5_m20.txt
+# Rule choosen: stv
+# Misra Gries used! k := 900000
+# Time computing: 5.487837314605713
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]

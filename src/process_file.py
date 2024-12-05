@@ -62,17 +62,17 @@ class process_file:
     def process_file(votes_file: any, rule: str, input_path: str, num_alternatives: int) -> str:
         """Processes a file using a specified voting rule. Returns formatted results as a string."""
         # Initialize parsers for different voting rules
-        plurality_parse = plurality_parse(list(range(1, num_alternatives + 1)))
-        stv_parse = stv_parse(list(range(1, num_alternatives + 1)))
-        copeland_parse = copeland_parse([str(x) for x in range(1, num_alternatives + 1)])
-        maximin_parse = maximin_parse([str(x) for x in range(1, num_alternatives + 1)])
+        _plurality_parse = plurality_parse(list(range(1, num_alternatives + 1)))
+        _stv_parse = stv_parse(list(range(1, num_alternatives + 1)))
+        _copeland_parse = copeland_parse([str(x) for x in range(1, num_alternatives + 1)])
+        _maximin_parse = maximin_parse([str(x) for x in range(1, num_alternatives + 1)])
         output_string = ""
         if isinstance(votes_file, str):
             # Skip the info file
             if not (votes_file == "info.txt"):
                 with open(os.path.abspath(votes_file), "r") as file:
-                    output_string = process_file.choose_rule(rule, file, plurality_parse, stv_parse, copeland_parse, maximin_parse)
+                    output_string = process_file.choose_rule(rule, file, _plurality_parse, _stv_parse, _copeland_parse, _maximin_parse)
         else:
             votes_file.seek(0)
-            output_string = process_file.choose_rule(rule, votes_file, plurality_parse, stv_parse, copeland_parse, maximin_parse)
+            output_string = process_file.choose_rule(rule, votes_file, _plurality_parse, _stv_parse, _copeland_parse, _maximin_parse)
         return output_string
