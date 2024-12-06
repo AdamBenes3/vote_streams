@@ -208,14 +208,16 @@ class process:
         
         origin_path = origin_path1
 
-        with open(origin_path, 'rb') as f:
+        print(origin_path)
+
+        with open(origin_path, 'r') as file_r:
             # Go to the end of the file and check the last line
-            lines = f.readlines()
-            # If file is empty or last line isn't empty
-            if not lines or lines[-1].strip():
-                with open(origin_path, 'ab') as f_append:
+            lines = file_r.readlines()
+            # If last line is not empty
+            if lines[-1][-1] != "\n":
+                with open(origin_path, 'a') as file_a:
                     # Add a newline at the end
-                    f_append.write(b'\n')
+                    file_a.write("\n")
 
 
         # Get rule for first file
