@@ -139,6 +139,18 @@ class stv_error:
             result1, ERROR = stv_error.turn_one(result1, result1.index(last_P_1), tempt_file, nr_candidates, how_many_times, ERROR)
         return result1, ERROR
 
+    def get_count(file_path : str) -> bool:
+        """
+        Get if the number of lines is more then 100.
+        """
+        line_count = 0
+        with open(file_path, 'rb') as f:
+            for _ in f:
+                line_count += 1
+                if line_count > 100:
+                    return False
+        return True
+
     def stv_error(result1 : List[str], result2 : List[str], origin_path : str, nr_candidates : int) -> int:
         """
         Iteratively adjusts the STV computation until `result1` matches `result2`.
@@ -162,7 +174,8 @@ class stv_error:
                     P = result2[-i]
                     result1, ERROR = stv_error.mismatch_action(P, result1, tempt_file, nr_candidates, i, ERROR, origin_path)
                     break
-        with open(tempt_file, 'r') as tmp:
-            for line in tmp:
-                print(line, end="")
+        if stv_error.get_count(tempt_file):
+            with open(tempt_file, 'r') as tmp:
+                for line in tmp:
+                    print(line, end="")
         return ERROR

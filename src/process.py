@@ -208,6 +208,16 @@ class process:
         
         origin_path = origin_path1
 
+        with open(origin_path, 'rb') as f:
+            # Go to the end of the file and check the last line
+            lines = f.readlines()
+            # If file is empty or last line isn't empty
+            if not lines or lines[-1].strip():
+                with open(origin_path, 'ab') as f_append:
+                    # Add a newline at the end
+                    f_append.write(b'\n')
+
+
         # Get rule for first file
         rule1 = process.get_line_second_part(input_path1, "# Rule choosen:")
 
@@ -224,7 +234,6 @@ class process:
         nr_candidates = int(process.get_line_second_part(origin_path1, "# NUMBER ALTERNATIVES:"))
         
         with open(output_path, 'w') as output_file:
-            print(origin_path, rule)
             if rule == "copeland":
                 with open(input_path1, 'r') as file:
                     # Read all lines and filter out empty lines (after stripping whitespace)

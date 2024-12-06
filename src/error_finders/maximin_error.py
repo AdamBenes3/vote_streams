@@ -66,6 +66,18 @@ class maximin_error:
         result1 = maximin_error.remove_comment_lines(result1)
         return result1
 
+    def get_count(file_path : str) -> bool:
+        """
+        Get if the number of lines is more then 100.
+        """
+        line_count = 0
+        with open(file_path, 'rb') as f:
+            for _ in f:
+                line_count += 1
+                if line_count > 100:
+                    return False
+        return True
+
     def maximin_error(result1 : List[str], result2 : List[str], origin_path : str, nr_candidates : int) -> int:
         """
         Iteratively adjusts the maximin computation until the results match.
@@ -85,7 +97,8 @@ class maximin_error:
             ERROR += 1
             # Perform a single adjustment iteration.
             result1 = maximin_error.turn_one(result1, result2, tempt_file, nr_candidates)
-        with open(tempt_file, 'r') as tmp:
-            for line in tmp:
-                print(line, end="")
+        if maximin_error.get_count(tempt_file):
+            with open(tempt_file, 'r') as tmp:
+                for line in tmp:
+                    print(line, end="")
         return ERROR
