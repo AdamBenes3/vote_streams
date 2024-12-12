@@ -103,17 +103,15 @@ class stv_error:
             ERROR (int) : Value of error.
         """
         with open(tempt_file, 'a') as tmp:
-            if how_many_times > 0:
-                for _ in range(how_many_times):
-                    ERROR += 1
-                    tmp.write("1: " + str(result1[current_index]) + '\n')
+            ERROR += how_many_times
+            tmp.write(str(how_many_times) + ": " + str(result1[current_index]) + '\n')
         # Process the temporary file using the STV method.
         result1 = process_file.process_file(tempt_file, "stv", tempt_file, nr_candidates)
         result1 = stv_error.remove_comment_lines(result1)
         result1 = ast.literal_eval(result1)
         return result1, ERROR
 
-    def mismatch_action(P, result1 : List[str], tempt_file : str, nr_candidates : int, i : int, ERROR : int, origin_path : str) -> Union[int, int]:
+    def mismatch_action(P, result1 : List[str], tempt_file : str, nr_candidates : int, i : int, ERROR : int) -> Union[int, int]:
         """
         Resolves a mismatch between `result1` and `result2` by adjusting the position of a candidate.
 
@@ -125,7 +123,6 @@ class stv_error:
             nr_candidates (int): Number of candidates in the election.
             i (int): Index (from the end) of the mismatched candidate in the results.
             ERROR (int): Current count of errors (iterations).
-            origin_path (str) : Path to the origin file.
 
         Returns:
             tuple: Updated `result1` and incremented `ERROR`.
@@ -133,8 +130,8 @@ class stv_error:
         last_P_1 = result1[-i]
         # Adjust result1 until P is correctly positioned relative to last_P_1.
         while result1.index(P) < result1.index(last_P_1):
-            how_many_times = stv_error.find_difference(origin_path, P, last_P_1)
-            if how_many_times == 0:
+            how_many_times = stv_error.find_difference(tempt_file, P, last_P_1)
+            if how_many_times <= 0:
                 how_many_times = 1
             result1, ERROR = stv_error.turn_one(result1, result1.index(last_P_1), tempt_file, nr_candidates, how_many_times, ERROR)
         return result1, ERROR
@@ -172,7 +169,7 @@ class stv_error:
                 if result1[-i] != result2[-i]:
                     # If a mismatch is detected, resolve it.
                     P = result2[-i]
-                    result1, ERROR = stv_error.mismatch_action(P, result1, tempt_file, nr_candidates, i, ERROR, origin_path)
+                    result1, ERROR = stv_error.mismatch_action(P, result1, tempt_file, nr_candidates, i, ERROR)
                     break
         if stv_error.get_count(tempt_file):
             with open(tempt_file, 'r') as tmp:
