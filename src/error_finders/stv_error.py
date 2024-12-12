@@ -144,8 +144,8 @@ class stv_error:
         Get if the number of lines is more then 100.
         """
         line_count = 0
-        with open(file_path, 'rb') as f:
-            for _ in f:
+        with open(file_path, 'r') as file:
+            for _ in file:
                 line_count += 1
                 if line_count > 100:
                     return False
